@@ -1,57 +1,399 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI USTYLE</title>
-    <meta name="robots" content="noindex,nofollow" />
-    <style>
-      :root { color-scheme: light; }
-      body {
-        margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: #f7f8fb;
-        color: #111827;
-      }
-      main {
-        max-width: 720px;
-        margin: 64px auto;
-        padding: 32px 24px;
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0,0,0,.04);
-      }
-      h1 { margin-top: 0; font-size: 32px; }
-      .badge {
-        display: inline-block;
-        padding: 6px 10px;
-        border-radius: 999px;
-        background: #eef2ff;
-        color: #3730a3;
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: .04em;
-      }
-      ul { line-height: 1.8; }
-      code {
-        background: #f3f4f6;
-        padding: 2px 6px;
-        border-radius: 6px;
-      }
-    </style>
-  </head>
-  <body>
-    <main>
-      <div class="badge">AI-USTYLE</div>
-      <h1>ai-ustyle.co.jp</h1>
-      <p>新規分離した Cloudflare 作業用の最小土台です。</p>
-      <ul>
-        <li>既存案件とは混同しない</li>
-        <li>Cloudflare / GitHub 操作は <code>guard -- ...</code> 前提</li>
-        <li>custom domain / route / bindings はまだ未接続</li>
-      </ul>
-      <p>疎通確認は <code>/healthz</code> を使います。</p>
-    </main>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>株式会社ユースタイル | AI導入・伴走型支援</title>
+  <meta name="description" content="株式会社ユースタイルは、現場に使えるAIの仕組みを構築し、セキュアで最適なAI運用基盤を描きます。">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/line-seed-jp@5.2.2/400.css" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/line-seed-jp@5.2.2/700.css" crossorigin>
+  <link rel="stylesheet" href="./style.css?v=5">
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Header -->
+<header class="header" id="header">
+  <div class="header-inner">
+    <div class="logo">U-STYLE</div>
+    <nav class="header-nav desktop-only">
+      <a href="#solutions">業務内容</a>
+      <a href="#process">導入フロー</a>
+      <a href="#strengths">強み</a>
+      <a href="#contact">お問い合わせ</a>
+    </nav>
+    <div class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</header>
+
+<!-- Offcanvas -->
+<nav class="offcanvas" id="offcanvas">
+  <div class="offcanvas-bg"></div>
+  <ul class="offcanvas-list">
+    <li><a href="#solutions" class="offcanvas-link">01. 業務内容</a></li>
+    <li><a href="#process" class="offcanvas-link">02. 導入フロー</a></li>
+    <li><a href="#strengths" class="offcanvas-link">03. 当社の強み</a></li>
+    <li><a href="#pricing" class="offcanvas-link">04. 料金について</a></li>
+    <li><a href="#usecase" class="offcanvas-link">05. 導入事例</a></li>
+    <li><a href="#company" class="offcanvas-link">06. 会社概要</a></li>
+    <li><a href="#contact" class="offcanvas-link">07. お問い合わせ</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-grid-overlay"></div>
+  <div class="hero-scanlines"></div>
+  <div class="hero-vignette"></div>
+  <div class="hero-data-stream" id="heroDataStream"></div>
+  <div class="hero-pulse-ring r1"></div>
+  <div class="hero-pulse-ring r2"></div>
+  <div class="hero-pulse-ring r3"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">AI INTEGRATION PARTNER</div>
+    <h1 class="hero-title">
+      <span class="hero-line" data-text="「AIと働く」を、">「AIと働く」を、</span>
+      <span class="hero-line" data-text="すべての現場に。">すべての現場に。</span>
+    </h1>
+    <p class="hero-sub">ただ導入するだけではなく、現場が実際に使えるAIの仕組みを構築。<br>あなたの事業に最適化したAI運用基盤を描きます。</p>
+    <div class="hero-cta-group">
+      <a href="#contact" class="btn-primary">無料で相談する</a>
+      <a href="#solutions" class="btn-ghost">業務内容を見る</a>
+    </div>
+  </div>
+  <div class="hero-scroll-hint">
+    <div class="scroll-mouse"><div class="scroll-wheel"></div></div>
+    <span>SCROLL</span>
+  </div>
+  <div class="hero-stats desktop-only">
+    <div class="stat"><span class="stat-num" data-target="200">0</span><span class="stat-unit">+</span><span class="stat-label">利用実績</span></div>
+    <div class="stat-divider"></div>
+    <div class="stat"><span class="stat-num" data-target="91">0</span><span class="stat-unit">%</span><span class="stat-label">時短率</span></div>
+    <div class="stat-divider"></div>
+    <div class="stat"><span class="stat-num" data-target="3">0</span><span class="stat-unit">ヶ月</span><span class="stat-label">平均導入期間</span></div>
+  </div>
+</section>
+
+<!-- Statement -->
+<section class="statement">
+  <div class="container">
+    <p class="statement-text">
+      <span class="st-line">AIの真の価値を引き出し、</span>
+      <span class="st-line">あなたの事業を最適化する。</span>
+      <span class="st-line">形だけの導入で終わらせない、</span>
+      <span class="st-line accent">伴走型パートナー。</span>
+    </p>
+  </div>
+</section>
+
+<!-- Solutions -->
+<section id="solutions" class="solutions">
+  <div class="container">
+    <div class="section-header reveal-up">
+      <span class="section-label">01. 業務内容</span>
+      <h2 class="section-title">企業の未来を創る<br>AIソリューション</h2>
+    </div>
+  </div>
+  <div class="ticker-wrap">
+    <div class="ticker-track" id="tickerTrack">
+      <div class="ticker-card">
+        <div class="ticker-img"><img src="assets/solution_llm.jpg" alt="カスタムLLM構築"></div>
+        <div class="ticker-body"><span class="ticker-num">01</span><h3>カスタムLLM構築・チューニング</h3><p>汎用AIでは届かない、専門業務にピントを合わせた独自のモデルを調整します。</p></div>
+      </div>
+      <div class="ticker-card">
+        <div class="ticker-img"><img src="assets/security_tech.jpg" alt="セキュア・データ基盤"></div>
+        <div class="ticker-body"><span class="ticker-num">02</span><h3>セキュア・データ基盤構築</h3><p>社外秘データを守りながらAIに入力できる、安全第一の運用環境を整備します。</p></div>
+      </div>
+      <div class="ticker-card">
+        <div class="ticker-img"><img src="assets/solution_auto.jpg" alt="業務フローのAI自動化"></div>
+        <div class="ticker-body"><span class="ticker-num">03</span><h3>業務フローのAI自動化</h3><p>煩雑なルーティンワークを抽出し、AIでシームレスに自動化する仕組みを構築します。</p></div>
+      </div>
+      <div class="ticker-card">
+        <div class="ticker-img"><img src="assets/business_tech.jpg" alt="AI内製化・定着支援"></div>
+        <div class="ticker-body"><span class="ticker-num">04</span><h3>AI内製化・定着支援</h3><p>導入して終わりではなく、現場スタッフが自発的にAIを使える状態まで伴走します。</p></div>
+      </div>
+      <!-- duplicates for loop -->
+      <div class="ticker-card">
+        <div class="ticker-img"><img src="assets/solution_llm.jpg" alt="カスタムLLM構築"></div>
+        <div class="ticker-body"><span class="ticker-num">01</span><h3>カスタムLLM構築・チューニング</h3><p>汎用AIでは届かない、専門業務にピントを合わせた独自のモデルを調整します。</p></div>
+      </div>
+      <div class="ticker-card">
+        <div class="ticker-img"><img src="assets/security_tech.jpg" alt="セキュア・データ基盤"></div>
+        <div class="ticker-body"><span class="ticker-num">02</span><h3>セキュア・データ基盤構築</h3><p>社外秘データを守りながらAIに入力できる、安全第一の運用環境を整備します。</p></div>
+      </div>
+      <div class="ticker-card">
+        <div class="ticker-img"><img src="assets/solution_auto.jpg" alt="業務フローのAI自動化"></div>
+        <div class="ticker-body"><span class="ticker-num">03</span><h3>業務フローのAI自動化</h3><p>煩雑なルーティンワークを抽出し、AIでシームレスに自動化する仕組みを構築します。</p></div>
+      </div>
+      <div class="ticker-card">
+        <div class="ticker-img"><img src="assets/business_tech.jpg" alt="AI内製化・定着支援"></div>
+        <div class="ticker-body"><span class="ticker-num">04</span><h3>AI内製化・定着支援</h3><p>導入して終わりではなく、現場スタッフが自発的にAIを使える状態まで伴走します。</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Process -->
+<section id="process" class="process">
+  <div class="container">
+    <div class="section-header reveal-up">
+      <span class="section-label">02. 導入フロー</span>
+      <h2 class="section-title">3ステップで<br>AIを現場に定着させる</h2>
+      <p class="process-lead">単なる「ツール導入」で終わらせない。<br>ユースタイルは伴走型で、確実に現場へ浸透させます。</p>
+    </div>
+    <div class="process-grid">
+      <!-- Left: steps -->
+      <div class="process-steps" id="processSteps">
+        <div class="process-timeline-line"><div class="process-timeline-fill" id="timelineFill"></div></div>
+
+        <div class="process-step" data-step="1">
+          <div class="step-dot" data-step="1"><span>1</span></div>
+          <div class="step-inner">
+            <canvas class="step-canvas" id="stepCanvas1" width="260" height="140"></canvas>
+            <div class="step-meta">
+              <span class="step-badge">STEP 01</span>
+              <span class="step-theme">課題定義フェーズ</span>
+            </div>
+            <h3 class="step-title">徹底したヒアリング</h3>
+            <p class="step-desc">まずは経営者様・ご担当者様との対話から始まります。「何に困っているか」「どこを自動化したいか」を見極め、表面的な課題ではなく<strong>本質的な要件を定義</strong>します。技術ありきではなく、最適な手法を検討するフェーズです。</p>
+            <ul class="step-tags">
+              <li>現状業務の棚卸し</li>
+              <li>課題の優先順位付け</li>
+              <li>KPI・目標設定</li>
+              <li>導入スコープ定義</li>
+            </ul>
+          </div>
+          <div class="step-visual">
+            <img class="step-image" src="assets/hero_bg.jpg" alt="徹底したヒアリング" loading="lazy">
+          </div>
+        </div>
+
+        <div class="process-step" data-step="2">
+          <div class="step-dot" data-step="2"><span>2</span></div>
+          <div class="step-inner">
+            <canvas class="step-canvas" id="stepCanvas2" width="260" height="140"></canvas>
+            <div class="step-meta">
+              <span class="step-badge">STEP 02</span>
+              <span class="step-theme">構築・セキュアフェーズ</span>
+            </div>
+            <h3 class="step-title">セキュアな環境構築<br>＆ AIチューニング</h3>
+            <p class="step-desc">情報漏洩などのリスクを完全に排除するため、セキュアな専用環境を構築。プロンプト最適化やAPI連携を行い、<strong>狙った出力が確実に出る</strong>よう徹底的にチューニングします。</p>
+            <ul class="step-tags">
+              <li>セキュア環境の設計・構築</li>
+              <li>プロンプト最適化</li>
+              <li>API・システム連携</li>
+              <li>品質テスト・精度検証</li>
+            </ul>
+          </div>
+          <div class="step-visual">
+            <img class="step-image" src="assets/performance_tech.jpg" alt="セキュアな環境構築 ＆ AIチューニング" loading="lazy">
+          </div>
+        </div>
+
+        <div class="process-step" data-step="3">
+          <div class="step-dot" data-step="3"><span>3</span></div>
+          <div class="step-inner">
+            <canvas class="step-canvas" id="stepCanvas3" width="260" height="140"></canvas>
+            <div class="step-meta">
+              <span class="step-badge">STEP 03</span>
+              <span class="step-theme">定着・伴走フェーズ</span>
+            </div>
+            <h3 class="step-title">現場定着と<br>継続的サポート</h3>
+            <p class="step-desc">システムが完成しても「使われなければ意味がない」のがAIです。マニュアル提供・オンボーディングを実施し、現場スタッフが<strong>自発的にAIを使える状態</strong>になるまで継続的に伴走します。</p>
+            <ul class="step-tags">
+              <li>操作マニュアル作成</li>
+              <li>現場オンボーディング</li>
+              <li>継続的な改善・更新</li>
+              <li>導入後サポート窓口</li>
+            </ul>
+          </div>
+          <div class="step-visual">
+            <img class="step-image" src="assets/tech_growth.jpg" alt="現場定着と継続的サポート" loading="lazy">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Strengths -->
+<section id="strengths" class="strengths">
+  <div class="container">
+    <div class="section-header reveal-up">
+      <span class="section-label">03. 当社の強み</span>
+      <h2 class="section-title">ユースタイルが<br>選ばれる理由</h2>
+    </div>
+    <div class="strengths-grid">
+      <div class="s-card reveal-up">
+        <div class="s-card-bg" style="background-image:url(assets/solution_auto.jpg)"></div>
+        <div class="s-card-num">01</div>
+        <div class="s-card-body">
+          <h3>現場主導のAIチューニング</h3>
+          <p>企業ごとの業務フローに合わせたカスタマイズ。現場のスタッフが迷わず使いこなせるシステムこそが真の業務改善です。</p>
+        </div>
+        <div class="s-card-arrow">→</div>
+      </div>
+      <div class="s-card reveal-up" style="--delay:0.15s">
+        <div class="s-card-bg" style="background-image:url(assets/security_tech.jpg)"></div>
+        <div class="s-card-num">02</div>
+        <div class="s-card-body">
+          <h3>セキュリティ最優先の運用基盤</h3>
+          <p>企業の大切なデータを守るため、セキュリティ管理を徹底した安全なAI環境を構築します。経営者が安心して導入できる仕組みを提供。</p>
+        </div>
+        <div class="s-card-arrow">→</div>
+      </div>
+      <div class="s-card reveal-up" style="--delay:0.3s">
+        <div class="s-card-bg" style="background-image:url(assets/solution_llm.jpg)"></div>
+        <div class="s-card-num">03</div>
+        <div class="s-card-body">
+          <h3>技術的知見による性能最大化</h3>
+          <p>コンテキスト設計やプロンプト最適化など、AIの裏側にある技術を深く理解。高度な技術力でAIのポテンシャルを極限まで引き出します。</p>
+        </div>
+        <div class="s-card-arrow">→</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Message -->
+<section id="pricing" class="message">
+  <div class="message-bg"><img src="assets/hero_bg.jpg" alt=""></div>
+  <div class="message-overlay"></div>
+  <div class="container">
+    <div class="message-inner reveal-up">
+      <span class="section-label">04. 料金について</span>
+      <blockquote>
+        <p>「AI業務診断（55,000円〜）」「AI業務アプリ開発パートナー（初期80万円〜／月額198,000円〜）」「AI人材育成プログラム（150万円〜）」の3つのプランをご用意。</p>
+        <p>各プランの詳細・含まれる内容・ご利用の流れは、料金ページにまとめています。</p>
+      </blockquote>
+      <div class="message-actions">
+        <a href="./pricing.html" class="btn-primary" data-save-scroll>料金ページを見る →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Use case -->
+<section id="usecase" class="usecase">
+  <div class="usecase-grid-bg"></div>
+  <div class="container">
+    <div class="section-header reveal-up">
+      <span class="section-label">05. 導入事例</span>
+      <h2 class="section-title">現場で使われている<br>AIツールの実例</h2>
+      <p class="usecase-lead">私たちが構築したAIツールが、実際の業務でどのように使われているのか。<br>ネットショップ運営の現場で運用されている事例をご紹介しています。</p>
+    </div>
+
+    <a href="./usecase-ebay.html" class="usecase-card reveal-up" data-save-scroll>
+      <div class="usecase-card-shot">
+        <img src="screenshots/usecase/01-bulk-upload.png" alt="eBay自動出品ツールのスクリーンショット" loading="lazy">
+      </div>
+      <div class="usecase-card-body">
+        <span class="usecase-card-tag">CASE 01 / EC・越境販売</span>
+        <h3 class="usecase-card-title">ネットショップ向け<br>eBay自動出品ツール</h3>
+        <p class="usecase-card-desc">複数ページにまたがっていたeBay出品作業を、1画面で完結する仕組みに再構築。商品説明文の生成や英訳、ポリシー取得などをAIで自動化することで、従来8〜10分かかっていた一連の作業を1〜2分程度に短縮しました。</p>
+        <ul class="usecase-card-meta">
+          <li><span>業種</span>ECサイト運営</li>
+          <li><span>用途</span>越境ECの出品自動化</li>
+          <li><span>効果</span>作業時間の大幅短縮</li>
+        </ul>
+        <span class="usecase-card-cta">実際の導入事例を見る<span class="cta-arrow" aria-hidden="true">→</span></span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact" class="contact">
+  <div class="contact-hero-img">
+    <img src="assets/contact_image.png" alt="AIと働く未来">
+    <div class="contact-hero-overlay"></div>
+  </div>
+  <div class="container">
+    <div class="section-header reveal-up">
+      <span class="section-label">07. お問い合わせ</span>
+      <h2 class="section-title">まずは無料相談から</h2>
+      <p class="contact-lead">過去に導入でつまずいた方もまずはお気軽にご相談ください。<br>わかりやすく丁寧にご案内いたします。</p>
+    </div>
+    <div class="contact-wrap">
+      <form class="contact-form reveal-up" id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="b306ae84-ca12-4231-a6e9-d3fd0b4eee73">
+        <input type="hidden" name="subject" value="【お問い合わせ】株式会社ユースタイル">
+        <input type="hidden" name="from_name" value="U-STYLE LP">
+        <input type="hidden" name="replyto" id="ccField" value="">
+        <div class="form-row">
+          <div class="form-group">
+            <label>お名前 <span class="required">必須</span></label>
+            <input type="text" name="お名前" placeholder="山田 太郎" required>
+          </div>
+          <div class="form-group">
+            <label>会社名</label>
+            <input type="text" name="会社名" placeholder="株式会社〇〇">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>メールアドレス <span class="required">必須</span></label>
+          <input type="email" name="email" placeholder="taro@example.com" required>
+        </div>
+        <div class="form-group">
+          <label>ご相談内容</label>
+          <textarea name="ご相談内容" rows="5" placeholder="AIの導入について検討しています..."></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-submit">入力内容を確認する <span class="btn-arrow">→</span></button>
+          <span class="form-or">または</span>
+          <a href="https://lin.ee/oq0a0Ic" class="btn-line" target="_blank" rel="noopener">LINEで無料相談 →</a>
+        </div>
+      </form>
+
+      <!-- Confirmation panel: hidden until form is submitted with valid input -->
+      <div class="contact-confirm reveal-up" id="contactConfirm" hidden>
+        <h3 class="confirm-title">この内容で送信します</h3>
+        <p class="confirm-note">内容に誤りがないかご確認ください。修正する場合は「内容を修正する」を押してください。</p>
+        <dl class="confirm-list">
+          <div class="confirm-row"><dt>お名前</dt><dd id="cf-name"></dd></div>
+          <div class="confirm-row"><dt>会社名</dt><dd id="cf-company"></dd></div>
+          <div class="confirm-row"><dt>メールアドレス</dt><dd id="cf-email"></dd></div>
+          <div class="confirm-row"><dt>ご相談内容</dt><dd id="cf-message"></dd></div>
+        </dl>
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" id="confirmEdit">← 内容を修正する</button>
+          <button type="button" class="btn-submit" id="confirmSend">この内容で送信する <span class="btn-arrow">→</span></button>
+        </div>
+        <p class="confirm-status" id="confirmStatus" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer" id="company">
+  <div class="footer-grid-bg"></div>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-logo">U-STYLE</div>
+      <div class="footer-links">
+        <a href="./company.html">会社概要・プライバシーポリシー</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="copyright">&copy; 2026 U-Style Inc. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<div class="page-progress" id="pageProgress"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<script src="./main.js?v=5" defer></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"95484e8aedf1485898de4c14ffe6ec09","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
 </html>

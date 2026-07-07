@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>導入事例｜ネットショップ向け eBay自動出品ツール | 株式会社ユースタイル</title>
+  <meta name="description" content="ネットショップ運営者向けに開発したeBay自動出品ツールの導入事例。商品説明文の自動生成、英訳、ポリシー取得などのAI機能で、従来の出品作業をシンプルにしたケースをご紹介します。">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/line-seed-jp@5.2.2/400.css" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/line-seed-jp@5.2.2/700.css" crossorigin>
+  <link rel="stylesheet" href="./style.css?v=5">
+</head>
+<body class="case-page">
+<header class="header">
+  <div class="header-inner">
+    <a class="logo" href="./index.html" aria-label="U-STYLE トップページ">U-STYLE</a>
+    <nav class="header-nav desktop-only">
+      <a href="./index.html#solutions">業務内容</a>
+      <a href="./index.html#process">導入フロー</a>
+      <a href="./index.html#strengths">強み</a>
+      <a href="./index.html#contact">お問い合わせ</a>
+    </nav>
+  </div>
+</header>
+
+<main class="case-main">
+  <div class="container">
+    <button type="button" class="case-back" id="caseBack" aria-label="前のページへ戻る">
+      <span class="case-back-arrow" aria-hidden="true">←</span>
+      <span>前のページへ戻る</span>
+    </button>
+
+    <section class="case-hero">
+      <div class="case-hero-inner">
+        <span class="case-eyebrow">CASE 01 / EC・越境販売</span>
+        <h1 class="case-title">ネットショップ向け eBay自動出品ツールの導入事例</h1>
+        <div class="case-meta">
+          <span>業種：ネットショップ運営</span>
+          <span>領域：越境ECの出品業務</span>
+          <span>形態：Webアプリ／業務支援ツール</span>
+        </div>
+
+        <div class="case-summary">
+          <h2>この事例の概要</h2>
+          <ul>
+            <li>従来、複数ページにまたがっていたeBayの出品作業を1画面に集約しました。</li>
+            <li>商品説明文の生成、英訳、ポリシー取得など、繰り返し発生していた作業をAIで自動化しました。</li>
+            <li>慣れたスタッフでも一商品あたり8〜10分かかっていた作業が、運用後は概ね1〜2分程度で完了するようになっています。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <article class="case-body">
+      <h2>背景：「出品作業に人手と時間がかかりすぎる」というご相談</h2>
+      <p>
+        最初にご相談をいただいたきっかけは、ネットショップ運営者さまから「eBayへの出品作業が、思っていたよりも大きな負担になっている」というお話でした。
+        国内のショッピングモールへの出品はある程度仕組み化できていたものの、海外向けのeBay出品については、商品ごとの作業量が多く、担当できるスタッフも限られている状況でした。
+      </p>
+      <p>
+        ヒアリングを進めていくなかで、いくつかのボトルネックが見えてきました。
+        ログインからカテゴリ選択、商品説明、英訳、価格設定、ポリシー設定までが画面ごとに分かれており、ひとつの商品を出品するためにいくつもの画面を行き来する必要があったことが、その大きな要因でした。
+      </p>
+
+      <h2>従来の作業フローで起きていたこと</h2>
+      <p>
+        実際に作業を観察させていただいたところ、慣れているスタッフの方でも、1商品あたり概ね8〜10分の時間がかかっていました。
+        作業の中身を分解してみると、おおよそ次のような流れでした。
+      </p>
+      <table class="case-table">
+        <thead>
+          <tr><th>工程</th><th>主な作業内容</th><th>目安時間</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1. ログイン・画面遷移</td><td>eBayへのログインと、出品ページ・設定ページの行き来</td><td>1〜2分</td></tr>
+          <tr><td>2. 商品情報の入力</td><td>タイトル、カテゴリ、商品状態などの手入力</td><td>2〜3分</td></tr>
+          <tr><td>3. 商品説明・翻訳</td><td>商品説明文の作成と、別ツールでの英訳・推敲</td><td>3〜4分</td></tr>
+          <tr><td>4. ポリシー・配送設定</td><td>支払い・配送・返品ポリシーの選択や設定</td><td>1〜2分</td></tr>
+          <tr><td>5. 価格設定・最終確認</td><td>価格入力、最終確認、出品ボタン</td><td>1分前後</td></tr>
+        </tbody>
+      </table>
+      <p>
+        個々の工程はそれほど難しい作業ではありません。
+        ただ、一連の流れの中で何度もページを遷移し、別タブで翻訳ツールを開き、ポリシー設定の画面を開き直し、といった「行き来」が積み重なっていたことで、作業全体の時間が膨らんでいました。
+      </p>
+      <p>
+        また、これらの作業は属人化しやすく、新しく参加したスタッフが同じスピードで出品できるようになるまでには、それなりの習熟期間が必要となっていました。
+      </p>
+
+      <h2>解決のアプローチ：1画面で完結するAIツールへの再構築</h2>
+      <p>
+        ご相談を踏まえて、私たちは「eBay出品に必要な工程を1画面に集約し、繰り返し発生する作業はAIで自動化する」という方針で、専用のWebアプリケーションを設計・開発しました。
+      </p>
+      <p>
+        ポイントは、業務そのものを大きく変えることではなく、<strong>これまで人が手で行っていた繰り返し作業を、ツール側に移していく</strong>という考え方です。
+        担当者の方にとっては、操作の流れがシンプルになるだけで、出品判断や価格設定など本来注力すべき部分はそのまま残るように構成しています。
+      </p>
+
+      <h3>機能01：商品画像とメモを、まとめて投入できる</h3>
+      <p>
+        最初の入り口は、商品画像と簡単なメモのアップロードです。
+        画像は複数まとめてドラッグ＆ドロップでき、商品の特徴や状態は箇条書き程度の「殴り書き」で構いません。きれいな文章に整えるのは、後段のAIが担当します。
+      </p>
+      <figure class="case-figure">
+        <img src="screenshots/usecase/01-bulk-upload.png" alt="画像とメモを一括でアップロードする画面">
+        <figcaption>画像のアップロードとメモの投入を、ひとつの画面で行えるようにしました。</figcaption>
+      </figure>
+
+      <h3>機能02：商品説明文と英訳を、AIが同時に生成</h3>
+      <p>
+        投入された情報をもとに、AIが日本語の商品説明文と英文タイトルを同時に生成します。
+        翻訳ツールを別タブで開いて手作業で英訳していた工程が省略され、説明文の作成から英訳までが、ひとつの流れの中で完了するようになっています。
+      </p>
+      <figure class="case-figure">
+        <img src="screenshots/usecase/02-write.png" alt="AIが商品説明文を生成している様子">
+        <figcaption>メモの内容をもとに、商品説明文と英訳が自動で生成されます。</figcaption>
+      </figure>
+
+      <h3>機能03：必要な項目へ、自動で反映</h3>
+      <p>
+        生成された商品説明文や英訳は、対応するフォームの項目へ自動的に反映されます。
+        コピー＆ペーストの繰り返しが不要になり、貼り付け先を間違えてしまうといったヒューマンエラーも起こりにくくなります。
+      </p>
+      <figure class="case-figure">
+        <img src="screenshots/usecase/03-autofill.png" alt="生成内容がフォームの該当欄へ自動反映される画面">
+        <figcaption>生成された情報が、画面右側のフォーム項目に自動で入っていきます。</figcaption>
+      </figure>
+
+      <h3>機能04：ポリシー設定は、ボタンひとつで取得</h3>
+      <p>
+        eBayでは、出品の際に支払い・配送・返品ポリシーを選択する必要があります。
+        従来は管理画面の中からその都度ポリシーを探しに行く運用でしたが、本ツールではAPI経由で登録済みのポリシーを取得し、ボタン操作だけで反映できるようにしました。
+      </p>
+      <figure class="case-figure">
+        <img src="screenshots/usecase/04-policy.png" alt="ポリシー設定をボタンひとつで取得できる画面">
+        <figcaption>ポリシー取得もワンクリック。設定画面を都度開く必要はありません。</figcaption>
+      </figure>
+
+      <h3>機能05：価格を入力したら、出品までシームレス</h3>
+      <p>
+        最後に価格を入力し、内容を確認すれば、そのままeBayへ出品される流れになっています。
+        確認画面と入力画面を何度も往復するような操作はなくなり、必要な確認は1つのページの中で完結します。
+      </p>
+      <figure class="case-figure">
+        <img src="screenshots/usecase/05-seamless.png" alt="価格入力から出品まで一連の操作で完了する画面">
+        <figcaption>価格を入れた流れのまま、eBayへの出品まで一気通貫で行えます。</figcaption>
+      </figure>
+
+      <h3>機能06：操作はシンプル、初めての方でも扱いやすく</h3>
+      <p>
+        画面のレイアウトと操作フローはできるだけシンプルにまとめています。
+        eBay出品の経験がないスタッフの方でも大きな迷いなく扱えるよう、「次に押すボタン」が常に明確になるよう配慮しました。
+      </p>
+      <figure class="case-figure">
+        <img src="screenshots/usecase/06-onebutton.png" alt="ボタンひとつで操作できる画面">
+        <figcaption>各ステップで押すべきボタンが明確になるよう、UIを整理しています。</figcaption>
+      </figure>
+
+      <div class="case-callout">
+        <strong>Point</strong>
+        AIを使って何かを「劇的に変える」ことよりも、現場の方が日々ぶつかっていた小さな手間を、一つひとつ取り除いていくことを意識しました。
+        その積み重ねが、結果として大きな時間短縮につながっています。
+      </div>
+
+      <h2>導入後の変化</h2>
+      <p>
+        運用を開始してから、現場の作業の様子は次のように変わってきています。
+      </p>
+      <ul>
+        <li><strong>作業時間の短縮：</strong>1商品あたり8〜10分かかっていた作業が、概ね1〜2分程度で完了するようになりました。</li>
+        <li><strong>属人化の解消：</strong>eBayの操作に慣れていないスタッフの方でも、初日から出品作業に参加できるようになりました。</li>
+        <li><strong>ミスの抑制：</strong>コピー＆ペーストや、ポリシー選択の取り違えなど、細かなヒューマンエラーが起こりにくくなりました。</li>
+        <li><strong>運営側の余裕：</strong>これまで出品作業に充てていた時間を、商品企画や顧客対応など、他の業務に振り向けられるようになりました。</li>
+      </ul>
+      <p>
+        数値そのものよりも、「同じ時間でこれまでより多くの商品を扱えるようになった」「スタッフを増やさずに販路を広げられる見通しが立った」といった、運営面での余裕が生まれた点を喜んでいただいています。
+      </p>
+
+      <h2>このプロジェクトで意識したこと</h2>
+      <p>
+        AIツールを導入する際、私たちが意識しているのは、いきなり大きなシステムを作るのではなく、<em>現場で繰り返し起きている作業</em>を起点に、本当に必要な機能だけを丁寧に組み上げていくことです。
+      </p>
+      <p>
+        今回のeBay自動出品ツールも、最初から完成形を目指したのではなく、ヒアリングと現場での観察を重ねながら、優先度の高い工程から順に自動化を進めていきました。
+        その結果として、機能の盛り込みすぎを避けながら、業務にしっかり馴染むツールに仕上げることができたと考えています。
+      </p>
+
+      <h2>同じような課題をお持ちの方へ</h2>
+      <p>
+        「特定の業務だけ、いつも時間がかかっている」「特定のスタッフに作業が集中している」「画面の行き来が多くて、新人が育ちにくい」——
+        こうした状況は、eBayの出品作業に限らず、多くの業務で起こりがちです。
+      </p>
+      <p>
+        ユースタイルでは、業務内容のヒアリングからツール設計、実装、運用後の改善までを一貫して支援しています。
+        既存システムを丸ごと置き換えるのではなく、現場の作業の中に「ちょうどよく収まるAIの仕組み」を組み込むかたちで、無理のない導入をご提案します。
+      </p>
+      <p>
+        現在の業務フローを整理する段階からのご相談も歓迎しております。お気軽にお問い合わせください。
+      </p>
+
+      <div class="case-end">
+        <p>同じような業務改善のご相談から、まずはお気軽にどうぞ。<br>無料相談の段階で、御社に合うかどうかも含めて一緒に検討させていただきます。</p>
+        <div class="case-end-actions">
+          <a href="./index.html#contact" class="btn-primary">無料相談を申し込む</a>
+          <button type="button" class="btn-ghost" id="caseBackBottom">前のページへ戻る</button>
+        </div>
+      </div>
+    </article>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer-grid-bg"></div>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-logo">U-STYLE</div>
+      <div class="footer-links">
+        <a href="./index.html">トップページ</a>
+        <a href="./company.html">会社概要</a>
+        <a href="./index.html#contact">お問い合わせ</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="copyright">&copy; 2026 U-Style Inc. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  function goBack() {
+    var ref = document.referrer;
+    var sameOrigin = ref && ref.indexOf(location.origin) === 0;
+    var fromIndex = sameOrigin && /\/index\.html(\?|#|$)|\/$/.test(ref);
+    if (fromIndex && window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = './index.html#usecase';
+    }
+  }
+  var btns = document.querySelectorAll('#caseBack, #caseBackBottom');
+  btns.forEach(function (b) { b.addEventListener('click', goBack); });
+})();
+</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"95484e8aedf1485898de4c14ffe6ec09","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

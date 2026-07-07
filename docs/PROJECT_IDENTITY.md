@@ -27,6 +27,8 @@ status:
 - github push completed: yes
 - pages deployment completed: yes
 - custom domain attached: no
+- custom domain requested: yes (pending verification / CNAME not set)
+- custom domain manual dns needed: yes (DashboardでCNAME追加要)
 
 resources:
 - github: https://github.com/ustylepromotion-hue/ai-ustyle-co-jp
