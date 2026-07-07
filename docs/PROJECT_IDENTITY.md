@@ -20,8 +20,10 @@ do_not_mix_with:
 
 status:
 - git repo initialized: yes
-- git remote origin configured: no
-- github repo created: no
-- cloudflare project created: no
+- git remote origin configured: yes
+- github repo created: yes
+- cloudflare pages project created: yes
 - cloudflare worker deployed: no
+- github push completed: no
+- pages deployment completed: no
 - custom domain attached: no
