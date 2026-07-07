@@ -1,0 +1,13 @@
+name = "ai-ustyle-co-jp-worker"
+main = "src/worker.js"
+compatibility_date = "2026-07-07"
+
+# guard安全優先: route / custom domain は未設定のままにしてある
+# この段階では既存案件に触れないため、bindings / routes / vars も未接続
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+[observability]
+enabled = true

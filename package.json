@@ -1,0 +1,14 @@
+{
+  "name": "ai-ustyle-co-jp",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check src/worker.js",
+    "dev": "guard -- npx wrangler dev",
+    "cf:whoami": "guard -- npx wrangler whoami",
+    "deploy": "guard -- npx wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}
