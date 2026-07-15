@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    a { color: #e8622c; text-decoration: underline; }
+    a:hover { color: #ff7a3d; }
+  </style>
+</helmet>
+
+<div style="font-family:'Noto Sans JP',sans-serif;background:#ffffff;color:#12233f;width:100%;max-width:100%;overflow-x:hidden;line-height:1.7;">
+
+  <!-- HEADER -->
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;max-width:960px;margin:0 auto;">
+    <span style="font-weight:900;font-size:15px;color:#0e1c33;letter-spacing:0.01em;">事務作業まるなげ<span style="color:#e8622c;">。</span></span>
+    <span style="font-size:11px;color:#5a6070;font-weight:700;">三河エリア対応</span>
+  </div>
+
+  <!-- 01 FV -->
+  <section data-screen-label="01-FV" style="background:#0e1c33;color:#fff;padding:24px 20px 56px;">
+    <div style="max-width:960px;margin:0 auto;display:flex;flex-wrap:wrap;gap:32px;align-items:center;">
+      <div style="flex:1 1 300px;min-width:0;">
+        <div style="display:inline-block;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.25);color:#fff;font-size:12px;font-weight:700;padding:6px 14px;border-radius:999px;margin-bottom:18px;letter-spacing:0.05em;">
+          三河エリア（豊橋・豊川・蒲郡・西尾・岡崎）対応
+        </div>
+        <h1 style="font-size:clamp(28px,6vw,42px);font-weight:900;margin:0 0 18px;letter-spacing:-0.01em;line-height:1.3;">
+          夜9時の事務所で、<br>まだ書類やってませんか。
+        </h1>
+        <p style="font-size:clamp(18px,4.2vw,22px);font-weight:800;margin:0 0 24px;color:#ffb088;">
+          その中の一番面倒な1件、タダで肩代わりさせてください。
+        </p>
+        <p style="font-size:15px;color:#c7d0e0;margin:0 0 28px;">
+          日報の転記、工事写真台帳、シフト表、請求書、栽培履歴。どれも、社長がやらなくていい仕事です。LINEか電話で内容を聞いて、できるなら引き受ける。できないなら、できないと言う。それだけです。
+        </p>
+        <a id="cta-line" href="#" style="display:inline-block;background:#e8622c;color:#fff;font-weight:900;font-size:17px;padding:18px 30px;border-radius:6px;text-decoration:none;box-shadow:0 8px 20px rgba(232,98,44,0.35);">
+          ▶ 一番面倒な1件を、無料で相談する
+        </a>
+        <p style="font-size:12px;color:#8b96ad;margin:20px 0 0;">
+          製造・建設・農業・飲食・介護ほか30業種の実務に対応
+        </p>
+      </div>
+
+      <div style="flex:1 1 280px;min-width:0;position:relative;padding:20px 24px 40px 0;">
+        <div style="width:100%;aspect-ratio:3/4;border-radius:10px;overflow:hidden;background:#fff;">
+          <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="fv-main" shape="rect" placeholder="夜の事務所で写真を撮る男性" title="{{ pr.heroMain }}" data-gen-prompt="{{ pr.heroMain }}" hint-size="100%,100%" src="images/fv-photo.webp"></x-import>
+        </div>
+        <div style="position:absolute;bottom:0;right:0;width:44%;background:#fff;border-radius:12px;box-shadow:0 12px 28px rgba(0,0,0,0.4);padding:8px;transform:rotate(-4deg);">
+          <div style="background:#0e1c33;border-radius:6px 6px 0 0;padding:5px 8px;font-size:9px;color:#fff;font-weight:800;">LINE</div>
+          <div style="aspect-ratio:3/4;overflow:hidden;background:#f4f4f4;border-radius:0 0 6px 6px;">
+            <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="fv-phone-doc" shape="rect" placeholder="完成書類の画面" title="{{ pr.heroPhoneDoc }}" data-gen-prompt="{{ pr.heroPhoneDoc }}" hint-size="100%,100%" src="images/after-photo.webp"></x-import>
+          </div>
+        </div>
+        <div style="position:absolute;top:6px;left:-6px;width:72px;height:72px;border-radius:50%;overflow:hidden;border:3px solid #0e1c33;box-shadow:0 6px 16px rgba(0,0,0,0.4);background:#fff;">
+          <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="fv-face" shape="circle" placeholder="経営者の顔" title="{{ pr.heroFace }}" data-gen-prompt="{{ pr.heroFace }}" hint-size="72px,72px" src="images/founder-photo.webp"></x-import>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 変化の起点 -->
+  <section data-screen-label="02-変化の起点" style="background:#fff;padding:56px 20px;">
+    <div style="max-width:760px;margin:0 auto;">
+      <h2 style="font-size:clamp(22px,5vw,28px);font-weight:900;margin:0 0 8px;text-align:center;">
+        会社は変えなくていい。夜の1件だけ、変えませんか。
+      </h2>
+      <p style="font-size:14px;color:#5a6070;margin:0 0 36px;text-align:center;">道具も、研修も、社内の説得も要りません。</p>
+
+      <div style="display:flex;flex-wrap:wrap;gap:32px;align-items:center;">
+        <div style="flex:1 1 240px;display:flex;flex-direction:column;gap:6px;align-items:center;">
+          <div style="width:100%;background:#0e1c33;color:#fff;padding:16px 24px;text-align:center;clip-path:polygon(0 0,100% 0,88% 100%,12% 100%);">
+            <div style="font-size:11px;font-weight:700;color:#ffb088;">STEP 1</div>
+            <div style="font-size:16px;font-weight:900;">気づく</div>
+          </div>
+          <div style="width:80%;background:#16294a;color:#fff;padding:16px 24px;text-align:center;clip-path:polygon(0 0,100% 0,85% 100%,15% 100%);">
+            <div style="font-size:11px;font-weight:700;color:#ffb088;">STEP 2</div>
+            <div style="font-size:16px;font-weight:900;">試す</div>
+          </div>
+          <div style="width:60%;background:#e8622c;color:#fff;padding:16px 24px;text-align:center;clip-path:polygon(0 0,100% 0,80% 100%,20% 100%);">
+            <div style="font-size:11px;font-weight:700;color:#ffe4d4;">STEP 3</div>
+            <div style="font-size:16px;font-weight:900;">変わる</div>
+          </div>
+        </div>
+
+        <div style="flex:1 1 280px;display:flex;flex-direction:column;gap:18px;">
+          <div style="display:flex;gap:14px;">
+            <span style="background:#0e1c33;color:#fff;font-weight:900;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">1</span>
+            <div><p style="margin:0;font-weight:900;font-size:15px;">気づく</p><p style="margin:2px 0 0;font-size:13px;color:#5a6070;">「これ、丸投げできる仕事だ」と気づく。道具は1つも増えません。</p></div>
+          </div>
+          <div style="display:flex;gap:14px;">
+            <span style="background:#16294a;color:#fff;font-weight:900;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">2</span>
+            <div><p style="margin:0;font-weight:900;font-size:15px;">試す</p><p style="margin:2px 0 0;font-size:13px;color:#5a6070;">一番嫌いな作業を1つ、話してみる。覚えることはゼロです。</p></div>
+          </div>
+          <div style="display:flex;gap:14px;">
+            <span style="background:#e8622c;color:#fff;font-weight:900;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">3</span>
+            <div><p style="margin:0;font-weight:900;font-size:15px;">変わる</p><p style="margin:2px 0 0;font-size:13px;color:#5a6070;">夜の机からその1件を消す算段が立つ。会社のやり方はそのままです。</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 共感 -->
+  <section data-screen-label="03-共感" style="background:#0e1c33;color:#fff;padding:56px 20px;">
+    <div style="max-width:760px;margin:0 auto;">
+      <div style="display:flex;gap:12px;align-items:stretch;margin:0 0 36px;">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;">
+          <div style="aspect-ratio:1;border-radius:8px;overflow:hidden;margin-bottom:8px;background:#fff;">
+            <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="before-photo" shape="rect" placeholder="深夜の手作業" title="{{ pr.before }}" data-gen-prompt="{{ pr.before }}" hint-size="100%,100%" src="images/before-photo.webp"></x-import>
+          </div>
+          <p style="text-align:center;font-size:11px;font-weight:900;color:#8b96ad;margin:0;letter-spacing:0.05em;">BEFORE</p>
+        </div>
+        <div style="flex:1.2;min-width:0;display:flex;flex-direction:column;">
+          <div style="aspect-ratio:1;border-radius:8px;overflow:hidden;margin-bottom:8px;position:relative;background:#fff;">
+            <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="empathy-center" shape="rect" placeholder="困る経営者" title="{{ pr.empathyCenter }}" data-gen-prompt="{{ pr.empathyCenter }}" hint-size="100%,100%" src="images/founder-photo.webp"></x-import>
+          </div>
+          <p style="text-align:center;font-size:13px;font-weight:900;color:#fff;margin:0;line-height:1.4;">その悩み、まず1件。話はそこからです。</p>
+        </div>
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;">
+          <div style="aspect-ratio:1;border-radius:8px;overflow:hidden;margin-bottom:8px;background:#fff;">
+            <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="after-photo" shape="rect" placeholder="完成書類を確認する朝" title="{{ pr.after }}" data-gen-prompt="{{ pr.after }}" hint-size="100%,100%" src="images/after-photo.webp"></x-import>
+          </div>
+          <p style="text-align:center;font-size:11px;font-weight:900;color:#e8622c;margin:0;letter-spacing:0.05em;">AFTER</p>
+        </div>
+      </div>
+
+      <h2 style="font-size:clamp(24px,5vw,30px);font-weight:900;margin:0 0 28px;text-align:center;">
+        社長、それ、社長の仕事じゃないですよね。
+      </h2>
+      <ul style="list-style:none;margin:0 0 32px;padding:0;display:flex;flex-direction:column;gap:12px;">
+        <li style="display:flex;gap:12px;font-size:15px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:14px 16px;"><span style="color:#ff8a52;font-weight:900;">▸</span>現場から回収した手書き日報を、毎朝1時間かけてエクセルに打ち直す</li>
+        <li style="display:flex;gap:12px;font-size:15px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:14px 16px;"><span style="color:#ff8a52;font-weight:900;">▸</span>深夜、数百枚の現場写真をエクセルに1枚ずつ貼って台帳を作る</li>
+        <li style="display:flex;gap:12px;font-size:15px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:14px 16px;"><span style="color:#ff8a52;font-weight:900;">▸</span>バイトのLINEを見ながら、人件費と相性を考えてシフトのパズルを組む</li>
+        <li style="display:flex;gap:12px;font-size:15px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:14px 16px;"><span style="color:#ff8a52;font-weight:900;">▸</span>軽トラのガソリン代、どこまで経費にしていいか毎年悩む</li>
+        <li style="display:flex;gap:12px;font-size:15px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:14px 16px;"><span style="color:#ff8a52;font-weight:900;">▸</span>星1の口コミに、怒りを抑えて大人の返信文を考える</li>
+      </ul>
+
+      <div style="background:#000;border-radius:12px;padding:24px;display:flex;gap:16px;align-items:center;">
+        <div style="width:88px;height:88px;flex-shrink:0;border-radius:50%;overflow:hidden;border:2px solid rgba(255,255,255,0.3);">
+          <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="empathy-dark" shape="circle" placeholder="夜の事務所の男性" title="{{ pr.empathyDark }}" data-gen-prompt="{{ pr.empathyDark }}" hint-size="88px,88px" src="images/gallery-office.webp"></x-import>
+        </div>
+        <div>
+          <p style="font-size:15px;font-weight:800;margin:0 0 6px;color:#c7d0e0;">昼は現場、夜は事務。三河の経営者は、日本で一番「二重に」働いています。</p>
+          <p style="font-size:17px;font-weight:900;margin:0;">その残業代、<span style="color:#ff8a52;">誰か払ってくれましたか。</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 オファー -->
+  <section data-screen-label="04-オファー" style="background:#fff;padding:56px 20px;">
+    <div style="max-width:680px;margin:0 auto;">
+      <h2 style="font-size:clamp(24px,5vw,30px);font-weight:900;margin:0 0 32px;text-align:center;">
+        やることは、面倒ごとを1つ、話すだけ。
+      </h2>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div style="background:#faf9f6;border:1px solid #e3e0d8;border-radius:8px;padding:22px;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+            <span style="background:#e8622c;color:#fff;font-weight:900;font-size:14px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</span>
+            <span style="font-weight:900;font-size:18px;">話す</span>
+          </div>
+          <p style="margin:0;font-size:15px;color:#3c4356;">「一番面倒なやつ」を1つ、LINEか電話で。うまく説明できなくて構いません。「毎晩これが嫌だ」で通じます。</p>
+        </div>
+        <div style="background:#faf9f6;border:1px solid #e3e0d8;border-radius:8px;padding:22px;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+            <span style="background:#e8622c;color:#fff;font-weight:900;font-size:14px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</span>
+            <span style="font-weight:900;font-size:18px;">聞く</span>
+          </div>
+          <p style="margin:0;font-size:15px;color:#3c4356;">中身を確認して、できる・できない、どんな形に仕上がるかを正直に答えます。あいまいな返事でごまかしません。</p>
+        </div>
+        <div style="background:#faf9f6;border:1px solid #e3e0d8;border-radius:8px;padding:22px;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+            <span style="background:#e8622c;color:#fff;font-weight:900;font-size:14px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</span>
+            <span style="font-weight:900;font-size:18px;">決める</span>
+          </div>
+          <p style="margin:0;font-size:15px;color:#3c4356;">納得したら、1件目を無料でやらせてもらいます。合わなければ断ってください。理由は要りません。追いかけもしません。</p>
+        </div>
+      </div>
+      <p style="text-align:center;margin:28px 0 0;font-size:14px;color:#5a6070;">「使い方を覚える」時間は1秒も要りません。覚えるのはこちらの仕事です。</p>
+    </div>
+  </section>
+
+  <!-- 05 数字で見る -->
+  <section data-screen-label="05-数字で見る" style="background:#0e1c33;color:#fff;padding:56px 20px;">
+    <div style="max-width:840px;margin:0 auto;">
+      <div style="width:56px;height:56px;border-radius:50%;overflow:hidden;margin:0 auto 12px;background:#fff;">
+        <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="head-stat" shape="circle" placeholder="数字の象徴" title="{{ pr.headStat }}" data-gen-prompt="{{ pr.headStat }}" hint-size="56px,56px" src="images/stat-cost.webp"></x-import>
+      </div>
+      <h2 style="font-size:clamp(22px,5vw,28px);font-weight:900;margin:0 0 6px;text-align:center;">数字で見る、まるなげ。</h2>
+      <p style="font-size:13px;color:#8b96ad;margin:0 0 40px;text-align:center;">背伸びしません。事実だけ、数字にしました。</p>
+
+      <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;margin-bottom:32px;">
+        <div style="flex:1 1 260px;position:relative;aspect-ratio:4/3;">
+          <div style="position:absolute;top:0;left:0;width:72%;height:74%;border-radius:8px;overflow:hidden;background:#fff;">
+            <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="num1a" shape="rect" placeholder="三河の工業団地と田畑" title="{{ pr.num1a }}" data-gen-prompt="{{ pr.num1a }}" hint-size="100%,100%" src="images/stat-industries.webp"></x-import>
+          </div>
+          <div style="position:absolute;bottom:0;right:0;width:48%;height:52%;border-radius:8px;overflow:hidden;border:3px solid #0e1c33;background:#fff;">
+            <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="num1b" shape="rect" placeholder="現場の道具の平置き" title="{{ pr.num1b }}" data-gen-prompt="{{ pr.num1b }}" hint-size="100%,100%" src="images/gallery-truck.webp"></x-import>
+          </div>
+          <div style="position:absolute;top:8%;right:6%;width:104px;height:104px;border-radius:50%;background:#fff;color:#0e1c33;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(0,0,0,0.35);">
+            <span style="font-size:44px;font-weight:900;line-height:1;color:#e8622c;">30</span><span style="font-size:11px;font-weight:800;">業種以上</span>
+          </div>
+        </div>
+        <div style="flex:1 1 260px;">
+          <p style="font-size:19px;font-weight:900;margin:0 0 8px;">対応する仕事の幅</p>
+          <p style="font-size:14px;color:#c7d0e0;margin:0;">建設・製造・運送・飲食・農業・介護——ここに無い業種でも、まずはご相談ください。</p>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;margin-bottom:32px;flex-direction:row-reverse;">
+        <div style="flex:1 1 260px;position:relative;aspect-ratio:4/3;">
+          <div style="position:absolute;top:0;left:0;width:72%;height:74%;border-radius:8px;overflow:hidden;background:#fff;">
+            <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="num2a" shape="rect" placeholder="現場で書類を撮る手元" title="{{ pr.num2a }}" data-gen-prompt="{{ pr.num2a }}" hint-size="100%,100%" src="images/stat-trial.webp"></x-import>
+          </div>
+          <div style="position:absolute;bottom:0;right:0;width:48%;height:52%;border-radius:8px;overflow:hidden;border:3px solid #0e1c33;background:#fff;">
+            <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="num2b" shape="rect" placeholder="無料の書類を差し出す手" title="{{ pr.num2b }}" data-gen-prompt="{{ pr.num2b }}" hint-size="100%,100%" src="images/carousel-invoice.webp"></x-import>
+          </div>
+          <div style="position:absolute;top:8%;right:6%;width:104px;height:104px;border-radius:50%;background:#fff;color:#0e1c33;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(0,0,0,0.35);">
+            <span style="font-size:44px;font-weight:900;line-height:1;color:#e8622c;">1</span><span style="font-size:11px;font-weight:800;">件、無料</span>
+          </div>
+        </div>
+        <div style="flex:1 1 260px;">
+          <p style="font-size:19px;font-weight:900;margin:0 0 8px;">まずはお試し</p>
+          <p style="font-size:14px;color:#c7d0e0;margin:0;">なぜ無料か。1件目の仕事ぶりを見てもらえば、2件目を頼みたくなる——その自信があるからです。合わなければ、1件で終わって構いません。</p>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;margin-bottom:32px;">
+        <div style="flex:1 1 260px;position:relative;aspect-ratio:4/3;">
+          <div style="position:absolute;top:0;left:0;width:72%;height:74%;border-radius:8px;overflow:hidden;background:#fff;">
+            <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="num3a" shape="rect" placeholder="整った机と書類" title="{{ pr.num3a }}" data-gen-prompt="{{ pr.num3a }}" hint-size="100%,100%" src="images/stat-cost.webp"></x-import>
+          </div>
+          <div style="position:absolute;bottom:0;right:0;width:48%;height:52%;border-radius:8px;overflow:hidden;border:3px solid #0e1c33;background:#fff;">
+            <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="num3b" shape="rect" placeholder="0円メモの平置き" title="{{ pr.num3b }}" data-gen-prompt="{{ pr.num3b }}" hint-size="100%,100%" src="images/carousel-estimate.webp"></x-import>
+          </div>
+          <div style="position:absolute;top:8%;right:6%;width:104px;height:104px;border-radius:50%;background:#fff;color:#0e1c33;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(0,0,0,0.35);">
+            <span style="font-size:44px;font-weight:900;line-height:1;color:#e8622c;">0</span><span style="font-size:11px;font-weight:800;">円</span>
+          </div>
+        </div>
+        <div style="flex:1 1 260px;">
+          <p style="font-size:19px;font-weight:900;margin:0 0 8px;">初期費用</p>
+          <p style="font-size:14px;color:#c7d0e0;margin:0;">登録料なし、月額の縛りなし、解約手続きすら存在しません。財布を出すのは、続けたくなってからで結構です。</p>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;flex-direction:row-reverse;">
+        <div style="flex:1 1 260px;position:relative;aspect-ratio:4/3;">
+          <div style="position:absolute;top:0;left:0;width:72%;height:74%;border-radius:8px;overflow:hidden;background:#fff;">
+            <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="num4a" shape="rect" placeholder="現場でスマホを送信する男性" title="{{ pr.num4a }}" data-gen-prompt="{{ pr.num4a }}" hint-size="100%,100%" src="images/stat-learn.webp"></x-import>
+          </div>
+          <div style="position:absolute;bottom:0;right:0;width:48%;height:52%;border-radius:8px;overflow:hidden;border:3px solid #0e1c33;background:#fff;">
+            <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="num4b" shape="rect" placeholder="送信ボタンを押す指" title="{{ pr.num4b }}" data-gen-prompt="{{ pr.num4b }}" hint-size="100%,100%" src="images/gallery-phone.webp"></x-import>
+          </div>
+          <div style="position:absolute;top:8%;right:6%;width:104px;height:104px;border-radius:50%;background:#fff;color:#0e1c33;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(0,0,0,0.35);">
+            <span style="font-size:44px;font-weight:900;line-height:1;color:#e8622c;">1</span><span style="font-size:11px;font-weight:800;">秒</span>
+          </div>
+        </div>
+        <div style="flex:1 1 260px;">
+          <p style="font-size:19px;font-weight:900;margin:0 0 8px;">覚える時間</p>
+          <p style="font-size:14px;color:#c7d0e0;margin:0;">電話かLINEで話すだけ。使い方を覚える時間は1秒も要りません。覚えるのはこちらの仕事です。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 導入イメージの声 -->
+  <section data-screen-label="06-利用イメージ" style="background:#fff;padding:56px 20px;">
+    <div style="max-width:960px;margin:0 auto;">
+      <h2 style="font-size:clamp(22px,5vw,28px);font-weight:900;margin:0 0 6px;text-align:center;">こんな使い方をイメージしています。</h2>
+      <p style="font-size:12px;color:#a08b7a;margin:0 0 32px;text-align:center;">※導入イメージです。実在の声・企業ではありません。</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;">
+        <sc-for list="{{ voices }}" as="v" hint-placeholder-count="6">
+          <div style="border:1px solid #e3e0d8;border-radius:8px;padding:20px;background:#faf9f6;">
+            <p style="font-size:15px;font-weight:800;margin:0 0 16px;line-height:1.6;">「{{ v.quote }}」</p>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="width:44px;height:44px;border-radius:50%;overflow:hidden;flex-shrink:0;">
+                <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ v.imgId }}" shape="circle" placeholder="{{ v.label }}" title="{{ v.prompt }}" data-gen-prompt="{{ v.prompt }}" hint-size="44px,44px" src="{{ v.imgSrc }}"></x-import>
+              </div>
+              <span style="font-size:12px;font-weight:700;color:#5a6070;">{{ v.label }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 対応できる書類ギャラリー -->
+  <section data-screen-label="07-書類ギャラリー" style="background:#f3f0ea;padding:56px 0;">
+    <div style="max-width:680px;margin:0 auto;padding:0 20px;">
+      <h2 style="font-size:clamp(22px,5vw,28px);font-weight:900;margin:0 0 8px;text-align:center;">あなたの机の上のそれ、たぶんこの中にあります。</h2>
+      <p style="font-size:13px;color:#5a6070;margin:0 0 28px;text-align:center;">対応できる書類の一例です。ここに無いものは、聞いてください。</p>
+    </div>
+    <div style="display:flex;gap:14px;overflow-x:auto;padding:0 20px 12px;scroll-snap-type:x mandatory;max-width:720px;margin:0 auto;">
+      <sc-for list="{{ docs }}" as="d" hint-placeholder-count="6">
+        <div style="flex:0 0 150px;scroll-snap-align:start;border-radius:8px;overflow:hidden;background:#fff;">
+          <div style="width:100%;aspect-ratio:1;">
+            <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ d.imgId }}" shape="rect" placeholder="{{ d.label }}" title="{{ d.prompt }}" data-gen-prompt="{{ d.prompt }}" hint-size="100%,100%" src="{{ d.imgSrc }}"></x-import>
+          </div>
+          <p style="text-align:center;font-size:12px;font-weight:800;margin:8px 0;">{{ d.label }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- 08 LINEフロー -->
+  <section data-screen-label="08-LINEフロー" style="background:#0e1c33;color:#fff;padding:56px 20px;">
+    <div style="max-width:480px;margin:0 auto;text-align:center;">
+      <h2 style="font-size:clamp(20px,5vw,26px);font-weight:900;margin:0 0 28px;">問い合わせは、この温度感でどうぞ。</h2>
+      <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:10px;text-align:left;">
+        <div style="align-self:flex-end;background:#e8622c;color:#fff;padding:11px 16px;border-radius:16px 16px 2px 16px;font-size:14px;max-width:80%;">毎晩、日報の転記だけで1時間かかってて……</div>
+        <div style="align-self:flex-start;background:rgba(255,255,255,0.12);color:#fff;padding:11px 16px;border-radius:16px 16px 16px 2px;font-size:14px;max-width:80%;">それ、たぶんうちに投げられるやつです。詳しく聞かせてください。1件目は無料です。</div>
+        <div style="align-self:flex-end;background:#e8622c;color:#fff;padding:11px 16px;border-radius:16px 16px 2px 16px;font-size:14px;max-width:80%;">じゃあ、お願いしてみようかな</div>
+        <div style="align-self:flex-start;background:rgba(255,255,255,0.12);color:#fff;padding:11px 16px;border-radius:16px 16px 16px 2px;font-size:14px;max-width:85%;">ありがとうございます。内容を見て、できること・進め方・かかる費用を正直にお返しします。</div>
+      </div>
+      <p style="font-size:12px;color:#8b96ad;margin:16px 0 0;">※実際のやり取りのイメージです</p>
+    </div>
+  </section>
+
+  <!-- 09 業種別ビフォーアフター -->
+  <section data-screen-label="09-ビフォーアフター" style="background:#fff;padding:56px 20px;">
+    <div style="max-width:960px;margin:0 auto;">
+      <h2 style="font-size:clamp(24px,5vw,30px);font-weight:900;margin:0 0 32px;text-align:center;">あなたの業界の「あの作業」。引き受け方は、もう決まっています。</h2>
+
+      <sc-if value="{{ isGridLayout }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;">
+          <sc-for list="{{ industries }}" as="ind" hint-placeholder-count="6">
+            <div style="border:1px solid #e3e0d8;border-radius:8px;overflow:hidden;background:#faf9f6;">
+              <div style="width:100%;aspect-ratio:4/3;">
+                <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ ind.imgId }}" shape="rect" placeholder="{{ ind.tag }}の現場写真" title="{{ ind.prompt }}" data-gen-prompt="{{ ind.prompt }}" hint-size="100%,100%" src="{{ ind.imgSrc }}"></x-import>
+              </div>
+              <div style="padding:20px;">
+                <div style="font-size:13px;font-weight:900;color:#e8622c;letter-spacing:0.05em;margin-bottom:10px;">{{ ind.tag }}</div>
+                <p style="margin:0 0 10px;font-size:14px;color:#5a6070;">Before：{{ ind.before }}</p>
+                <p style="margin:0;font-size:15px;font-weight:800;">{{ ind.afterPrefix }}<span style="color:#e8622c;">{{ ind.afterStrong }}</span>{{ ind.afterSuffix }}</p>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isScrollLayout }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:16px;overflow-x:auto;padding-bottom:12px;scroll-snap-type:x mandatory;">
+          <sc-for list="{{ industries }}" as="ind" hint-placeholder-count="6">
+            <div style="flex:0 0 240px;scroll-snap-align:start;border:1px solid #e3e0d8;border-radius:8px;overflow:hidden;background:#faf9f6;">
+              <div style="width:100%;aspect-ratio:4/3;">
+                <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ ind.imgId }}" shape="rect" placeholder="{{ ind.tag }}の現場写真" title="{{ ind.prompt }}" data-gen-prompt="{{ ind.prompt }}" hint-size="100%,100%" src="{{ ind.imgSrc }}"></x-import>
+              </div>
+              <div style="padding:18px;">
+                <div style="font-size:12px;font-weight:900;color:#e8622c;letter-spacing:0.05em;margin-bottom:8px;">{{ ind.tag }}</div>
+                <p style="margin:0 0 8px;font-size:13px;color:#5a6070;">Before：{{ ind.before }}</p>
+                <p style="margin:0;font-size:14px;font-weight:800;">{{ ind.afterPrefix }}<span style="color:#e8622c;">{{ ind.afterStrong }}</span>{{ ind.afterSuffix }}</p>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <p style="text-align:center;margin:28px 0 0;font-size:15px;font-weight:700;">ここに無い業種でもOK。「うちのこれ、できる？」の一言から始めてください。</p>
+    </div>
+  </section>
+
+  <!-- 10 対応業種帯 -->
+  <section data-screen-label="10-対応業種" style="background:#f3f0ea;padding:48px 20px;">
+    <div style="max-width:760px;margin:0 auto;text-align:center;">
+      <div style="width:56px;height:56px;border-radius:50%;overflow:hidden;margin:0 auto 12px;">
+        <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="head-area" shape="circle" placeholder="三河の地域" title="{{ pr.headArea }}" data-gen-prompt="{{ pr.headArea }}" hint-size="56px,56px" src="images/stat-industries.webp"></x-import>
+      </div>
+      <h2 style="font-size:clamp(20px,5vw,26px);font-weight:900;margin:0 0 8px;">対応業種一覧（一例）</h2>
+      <p style="font-size:13px;color:#5a6070;margin:0 0 24px;">三河エリアなら、どんな業種でもまずはご相談ください。</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">
+        <sc-for list="{{ industryTags }}" as="tagItem" hint-placeholder-count="28">
+          <span style="background:#e7e3da;border:1px solid #d8d2c6;border-radius:6px;padding:7px 13px;font-size:12px;font-weight:700;color:#6b6f78;">{{ tagItem.name }}</span>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 差別化 -->
+  <section data-screen-label="11-差別化" style="background:#0e1c33;color:#fff;padding:72px 20px;">
+    <div style="max-width:520px;margin:0 auto;text-align:center;">
+      <p style="font-size:clamp(18px,4.5vw,22px);font-weight:800;margin:0 0 12px;color:#8b96ad;text-decoration:line-through;text-decoration-color:#5a6070;">他社は、資料を寄越します。</p>
+      <p style="font-size:clamp(24px,6vw,32px);font-weight:900;margin:0;">私たちは、<span style="color:#ff8a52;">あなたの愚痴から聞きます</span>。</p>
+    </div>
+  </section>
+
+  <!-- 12 内訳stat3 -->
+  <section data-screen-label="12-内訳" style="background:#fff;padding:56px 20px;">
+    <div style="max-width:840px;margin:0 auto;">
+      <h2 style="font-size:clamp(22px,5vw,28px);font-weight:900;margin:0 0 8px;text-align:center;">その「ムダ」、年間にすると。</h2>
+      <p style="font-size:13px;color:#5a6070;margin:0 0 36px;text-align:center;">たった30分の作業が、1年でこれだけ積み上がります。</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;">
+        <sc-for list="{{ stats }}" as="st" hint-placeholder-count="3">
+          <div style="border:1px solid #e3e0d8;border-radius:8px;overflow:hidden;background:#faf9f6;">
+            <div style="width:100%;aspect-ratio:16/9;">
+              <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ st.imgId }}" shape="rect" placeholder="{{ st.label }}" title="{{ st.prompt }}" data-gen-prompt="{{ st.prompt }}" hint-size="100%,100%" src="{{ st.imgSrc }}"></x-import>
+            </div>
+            <div style="padding:18px 20px 20px;text-align:center;">
+              <div><span style="font-size:38px;font-weight:900;color:#e8622c;">{{ st.number }}</span><span style="font-size:14px;font-weight:800;color:#e8622c;">{{ st.unit }}</span></div>
+              <p style="margin:6px 0 0;font-size:13px;color:#5a6070;">{{ st.label }}</p>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 カイゼン算式 -->
+  <section data-screen-label="13-カイゼン算式" style="background:#f3f0ea;padding:56px 20px;">
+    <div style="max-width:600px;margin:0 auto;text-align:center;">
+      <h2 style="font-size:clamp(22px,5vw,28px);font-weight:900;margin:0 0 28px;">トヨタ式で言えば、これは「ムダの中のムダ」です。</h2>
+      <p style="font-size:15px;color:#3c4356;margin:0 0 24px;">毎日の転記作業が30分、年間250日稼働、社長の時間単価を5,000円とすると——</p>
+      <div style="background:#0e1c33;color:#fff;border-radius:8px;padding:28px 20px;margin-bottom:24px;">
+        <p style="margin:0 0 10px;font-size:16px;font-weight:700;color:#c7d0e0;">30分 × 250日 = 年間125時間</p>
+        <p style="margin:0;font-size:clamp(28px,7vw,40px);font-weight:900;color:#ff8a52;">年間62万5,000円</p>
+        <p style="margin:6px 0 0;font-size:13px;color:#8b96ad;">125時間 × 5,000円</p>
+      </div>
+      <p style="font-size:15px;color:#3c4356;margin:0 0 8px;">現場のカイゼンには厳しい三河の会社が、事務所ではこの金額を毎年捨てています。</p>
+      <p style="font-size:16px;font-weight:800;margin:0 0 32px;">機械を1台入れるより、まず「夜の転記」を消すほうが早い。</p>
+      <a href="#" style="display:inline-block;background:#e8622c;color:#fff;font-weight:900;font-size:17px;padding:16px 32px;border-radius:6px;text-decoration:none;">▶ うちが毎年いくら捨ててるか、聞いてみる（無料）</a>
+    </div>
+  </section>
+
+  <!-- 14 現場のリアル -->
+  <sc-if value="{{ showGallery }}" hint-placeholder-val="{{ true }}">
+    <section data-screen-label="14-現場のリアル" style="background:#fff;padding:56px 20px;">
+      <div style="max-width:840px;margin:0 auto;">
+        <h2 style="font-size:clamp(22px,5vw,28px);font-weight:900;margin:0 0 28px;text-align:center;">三河の「現場」を、こう見ています。</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+          <sc-for list="{{ gallery }}" as="g" hint-placeholder-count="6">
+            <div style="aspect-ratio:4/3;border-radius:8px;overflow:hidden;">
+              <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ g.imgId }}" shape="rect" placeholder="{{ g.label }}" title="{{ g.prompt }}" data-gen-prompt="{{ g.prompt }}" hint-size="100%,100%" src="{{ g.imgSrc }}"></x-import>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+  </sc-if>
+
+  <!-- 15 無料のあと（料金カード） -->
+  <section data-screen-label="15-無料のあと" style="background:#0e1c33;color:#fff;padding:56px 20px;">
+    <div style="max-width:680px;margin:0 auto;">
+      <h2 style="font-size:clamp(22px,5vw,28px);font-weight:900;margin:0 0 32px;text-align:center;">無料のあと、どうなりますか？</h2>
+      <div style="display:flex;flex-wrap:wrap;gap:16px;">
+        <div style="flex:1 1 240px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.18);border-radius:8px;overflow:hidden;">
+          <div style="background:#e8622c;color:#fff;font-weight:900;font-size:14px;padding:12px;text-align:center;">STEP A ｜ 無料お試し</div>
+          <div style="padding:22px;">
+            <p style="font-size:28px;font-weight:900;margin:0 0 10px;">0<span style="font-size:15px;">円</span></p>
+            <p style="margin:0;font-size:14px;color:#c7d0e0;">1件、無料でやらせてもらいます。先に内容を聞き、できる・できないを正直に伝えてから。ここで終わっても費用はゼロです。</p>
+          </div>
+        </div>
+        <div style="flex:1 1 240px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.18);border-radius:8px;overflow:hidden;">
+          <div style="background:#16294a;color:#fff;font-weight:900;font-size:14px;padding:12px;text-align:center;">STEP B ｜ 継続を希望する場合のみ</div>
+          <div style="padding:22px;">
+            <p style="font-size:28px;font-weight:900;margin:0 0 10px;">お見積り</p>
+            <p style="margin:0;font-size:14px;color:#c7d0e0;">続けたい場合だけ、量と内容で見積もります。断るのに理由は要りません。営業電話は一本もかけません。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16 Q&A -->
+  <section data-screen-label="16-QA" style="background:#f3f0ea;padding:56px 20px;">
+    <div style="max-width:760px;margin:0 auto;">
+      <h2 style="font-size:clamp(22px,5vw,28px);font-weight:900;margin:0 0 28px;text-align:center;">よくある不安、先にお答えします。</h2>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;">
+        <div style="flex:1 1 200px;background:#0e1c33;color:#fff;border-radius:8px;padding:22px;align-self:flex-start;">
+          <p style="margin:0 0 10px;font-size:15px;font-weight:900;">聞きにくいことほど、先に。</p>
+          <p style="margin:0 0 16px;font-size:13px;color:#c7d0e0;">質問だけで終わっても構いません。それで縁がなくても、こちらは困りません。気軽にどうぞ。</p>
+          <a href="#" style="font-size:13px;font-weight:800;color:#ffb088;">→ 質問だけしてみる（無料）</a>
+        </div>
+        <div style="flex:2 1 300px;background:#fff;border-radius:8px;padding:6px 20px;">
+          <sc-for list="{{ faqItems }}" as="item" hint-placeholder-count="5">
+            <div style="border-bottom:1px solid #e3e0d8;">
+              <div onClick="{{ item.toggle }}" style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 2px;cursor:pointer;">
+                <span style="font-weight:900;font-size:14px;">Q. {{ item.q }}</span>
+                <span style="font-weight:900;font-size:18px;color:#e8622c;flex-shrink:0;">{{ item.icon }}</span>
+              </div>
+              <sc-if value="{{ item.isOpen }}">
+                <p style="margin:0 0 18px;font-size:13px;color:#3c4356;padding:0 2px;">A. {{ item.a }}</p>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 17 運営者 -->
+  <section data-screen-label="17-運営者" style="background:#fff;padding:56px 20px;">
+    <div style="max-width:560px;margin:0 auto;text-align:center;">
+      <div style="width:100%;max-width:260px;aspect-ratio:3/2;border-radius:8px;overflow:hidden;margin:0 auto 24px;">
+        <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="founder-photo" shape="rect" placeholder="三河の現場に立つ経営者" title="{{ pr.founder }}" data-gen-prompt="{{ pr.founder }}" hint-size="100%,100%" src="images/founder-photo.webp"></x-import>
+      </div>
+      <h2 style="font-size:clamp(22px,5vw,28px);font-weight:900;margin:0 0 24px;">三河の現場を知っている人間が、やっています。</h2>
+      <p style="font-size:15px;color:#3c4356;margin:0 0 6px;">株式会社ユースタイル（三河地方）。</p>
+      <p style="font-size:15px;color:#3c4356;margin:0 0 6px;">製造の下請、建設のひとり親方、豊橋の農家、西尾の茶農家、蒲郡の町工場——</p>
+      <p style="font-size:15px;color:#3c4356;margin:0 0 6px;">「昼は現場・夜は事務」で回っているこの地域の実情を前提に、</p>
+      <p style="font-size:16px;font-weight:800;margin:0;">現場に一切負担をかけない形だけを提供しています。</p>
+    </div>
+  </section>
+
+  <!-- 18 クロージング -->
+  <section data-screen-label="18-クロージング" style="background:#0e1c33;color:#fff;padding:64px 20px 80px;">
+    <div style="max-width:760px;margin:0 auto;display:flex;flex-wrap:wrap;gap:32px;align-items:center;justify-content:center;">
+      <div style="flex:0 0 180px;">
+        <div style="width:180px;background:#fff;border-radius:18px;padding:10px;box-shadow:0 16px 40px rgba(0,0,0,0.45);">
+          <div style="background:#0e1c33;border-radius:10px 10px 0 0;padding:8px;font-size:11px;color:#fff;font-weight:800;text-align:center;">LINE 友だち追加</div>
+          <div style="aspect-ratio:3/4;overflow:hidden;background:#f4f4f4;border-radius:0 0 10px 10px;">
+            <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="closing-device" shape="rect" placeholder="LINE追加画面" title="{{ pr.closingDevice }}" data-gen-prompt="{{ pr.closingDevice }}" hint-size="100%,100%" src="images/after-photo.webp"></x-import>
+          </div>
+        </div>
+      </div>
+      <div style="flex:1 1 300px;text-align:center;">
+        <h2 style="font-size:clamp(24px,6vw,34px);font-weight:900;margin:0 0 20px;">その夜の書類仕事、今夜で最後にしに来ませんか。</h2>
+        <p style="font-size:15px;color:#c7d0e0;margin:0 0 6px;">明日も現場はあります。せめて夜の1時間は、家族と、自分の身体のために。</p>
+        <p style="font-size:16px;font-weight:800;margin:0 0 28px;">まずは「一番面倒なやつ」の話を、1件だけ。</p>
+        <a href="#" style="display:inline-block;background:#e8622c;color:#fff;font-weight:900;font-size:18px;padding:18px 36px;border-radius:6px;text-decoration:none;box-shadow:0 8px 20px rgba(232,98,44,0.35);margin-bottom:14px;">▶ 一番面倒な1件を、無料で相談する（LINEで1分）</a>
+        <p style="font-size:13px;color:#8b96ad;margin:0;">友だち追加しても、こちらから売り込みは送りません。最初に話すのは、あなたの面倒ごとです。</p>
+      </div>
+    </div>
+  </section>
+
+  <footer style="background:#0a1526;color:#5a6478;padding:24px 20px;text-align:center;font-size:12px;">
+    株式会社ユースタイル｜三河地方｜事務作業まるなげ無料お試し
+  </footer>
+
+  <sc-if value="{{ showFollowBar }}" hint-placeholder-val="{{ true }}">
+    <div style="position:fixed;bottom:0;left:0;right:0;z-index:50;background:#0e1c33;padding:10px 16px;display:flex;align-items:center;justify-content:center;box-shadow:0 -4px 16px rgba(0,0,0,0.25);">
+      <a href="#cta-line" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;max-width:520px;background:#e8622c;color:#fff;font-weight:900;font-size:16px;padding:14px 20px;border-radius:6px;text-decoration:none;letter-spacing:0.02em;">
+        ▶ 一番面倒な1件を、無料で相談する（LINEで1分）
+      </a>
+    </div>
+    <div style="height:70px;"></div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;showFollowBar&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;表示設定&quot; },
+  &quot;industryLayout&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;grid&quot;, &quot;options&quot;: [&quot;grid&quot;, &quot;scroll&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;表示設定&quot; },
+  &quot;showGallery&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;表示設定&quot; }
+}">
+class Component extends DCLogic {
+  state = { openFaq: 0 };
+
+  AD = '｜富士フイルム風のドキュメンタリー写真、彩度低め・暖色寄りのホワイトバランス、日本の三河地方の実在感。外国人モデル・オフィス系ストック写真感・過度なレタッチ・水色グラデは禁止。';
+
+  faqData = [
+    { q: '本当に無料？あとから請求されない？', a: '無料です。あとから請求する仕組みが、そもそもありません。継続したい方にだけ、内容に応じて見積りを出します。' },
+    { q: 'パソコンが苦手でも大丈夫？', a: '電話かLINEで話せれば十分です。パソコンは開かなくて構いません。' },
+    { q: '手書きが汚くても読める？', a: '油と泥の日報、達筆すぎる伝票、歓迎です。読めるかどうかで悩むのは、こちらの仕事です。' },
+    { q: '書類の情報が外に漏れない？', a: 'お預かりしたデータは、作業が終わったら削除します。秘密保持契約書も結べます。書類が商売の中身そのものだと、分かった上でやっています。' },
+    { q: '元請や組合の指定書式にも合わせられる？', a: 'はい。指定様式の見本を見せてください。その形で出せるかどうか、はっきり答えます。' },
+  ];
+
+  inlinePrompts = {
+    heroMain: '深夜9時の小さな町工場の事務所で、作業着姿の40代日本人男性が机に向かい、片手のスマホで書類を撮影している。蛍光灯の白い光と手元スタンドの暖色光が混在。35mm、やや引きで書類の山も入れる。疲労と生活感、紙と油の質感。縦3:4。',
+    heroPhoneDoc: '完成した集計済みエクセル/PDF書類がスマホ画面いっぱいに表示されている様子。真上からの寄り、画面の発光を活かす。清潔で整った表組み、余白のあるレイアウト、安心感。縦3:4。',
+    heroFace: '三河の中小企業経営者の40代日本人男性のバストアップ。作業着かジャンパー、自然な微笑、正面やや斜め。屋外の柔らかい曇天光。円形トリミング前提の中央構図、背景は事務所か現場。1:1。',
+    before: '夜、蛍光灯の下でノートパソコンの前に手書き日報の束と現場写真プリントを広げ、1枚ずつ貼り付けている日本人男性の手元。青白い画面光と疲労感。35mmの寄り、雑然とした机、紙と埃の質感。1:1。',
+    after: '朝の窓辺の事務所で、スマホに表示された整った完成書類を確認するだけの日本人男性の手元。片付いた机、湯気の立つコーヒー。柔らかい順光、暖色、安堵感。35mmの寄り。1:1。',
+    empathyCenter: '三河の中小企業経営者の40代日本人男性が事務所で少し困った表情で書類を見ている中景。生活感のある事務所、窓からの自然光、共感を誘うドキュメンタリー。3:4。',
+    empathyDark: '夜の事務所で一人パソコンに向かう作業着の日本人男性の横顔〜後ろ姿。暗い室内に画面光と手元灯だけ。孤独と静けさ、シネマティックな深い影。円形トリミング前提。1:1。',
+    num1a: '三河地方の工業団地と田畑が隣り合う俯瞰風景。夕方の斜光、金色がかった色温度。35mm広角の引き、手前に工場の屋根、奥に茶畑と山並み。土と鉄の生活感のある質感。4:3。',
+    num1b: '建設・製造・農業の道具を並べた平置き（ヘルメット、伝票、軍手、ノート、鉛筆、電卓）。真俯瞰、窓からの自然光、暖色のトーン、金属と布と紙が混ざる素材感のあるフラットレイ、複数業種の現場感を一枚で象徴。1:1。',
+    num2a: '現場で作業着の日本人男性がスマホで書類を1枚撮影する手元の寄り。屋外の柔らかい光、動作が伝わる構図、35mm、背景は建設現場か作業場。4:3。',
+    num2b: '「無料」と書かれた付箋が貼られた1通の完成書類を差し出す日本人の手元。清潔な木の机、柔らかい順光、暖色のトーン、紙の質感と手の生活感、贈り物のような温度感のあるシンプルで象徴的な構図。1:1。',
+    num3a: '明るい窓際の机に整然と積まれた完成書類とノートパソコン、湯気の立つコーヒー。朝の柔らかい順光、暖色のトーン、余白と清潔感、片付いた事務所の安心感が伝わる構図、35mm。4:3。',
+    num3b: '電卓と「0円」と書かれた手書きメモ、空の封筒を並べた平置き。真俯瞰、柔らかい自然光、暖色のトーン、紙と金属の質感、初期費用ゼロと安心感を象徴するミニマルで清潔な静物構図。1:1。',
+    num4a: '現場に立つ作業着の日本人男性が片手でスマホを操作し送信する、迷いのない自然な様子。屋外の柔らかい光、35mm、背景に建設現場や作業場をぼかす、手軽さと余裕が伝わるドキュメンタリー構図。4:3。',
+    num4b: 'スマホの送信ボタンを押す日本人の指の寄り、画面に送信中の表示。清潔な構図、暖色の環境光、指先と画面の光の質感、たった1秒で終わる手軽さを象徴する動作のクローズアップ。1:1。',
+    closingDevice: 'スマホのLINE友だち追加画面を思わせる清潔なUI表示のモック風写真。真正面、暖色の環境光、1通目のメッセージ入力を待つ様子、余白のある構図。3:4。',
+    founder: '三河の事務所か現場に立つ誠実な雰囲気の40代日本人男性経営者。作業着かジャケット、自然な表情、正面やや斜め。曇天の柔らかい光、背景に地域の風景。3:2。',
+    headStat: '電卓とメモ帳と鉛筆、卓上時計を並べた小さな静物の平置き。真俯瞰、柔らかい自然光、暖色のトーン、数字と時間を象徴するミニマルな構図、紙と金属の質感、事務仕事の道具立て。1:1。',
+    headArea: '三河地方の地図か町並みを俯瞰した象徴的なミニカット。柔らかい自然光、暖色のトーン、豊橋・岡崎・西尾あたりの実在感、工場と田畑が混ざる地域性を落ち着いた色調で表現。1:1。',
+  };
+
+  voiceData = [
+    { imgId: 'voice-construction', label: '建設業 経営者', quote: '深夜の写真貼り付けが、まるごと消えました。', base: '建設業の40代日本人男性経営者のバストアップ。ヘルメットを脇に抱え、日焼けした顔で自然な表情。屋外の柔らかい曇天光、背景に建設現場の足場をぼかす。円形トリミング前提の中央構図、信頼感のある実直な佇まい。1:1。' },
+    { imgId: 'voice-manufacturing', label: '製造業 総務', quote: '毎朝の転記1時間が、ゼロになりました。', base: '町工場の総務担当の30代日本人女性のバストアップ。作業エプロン姿で穏やかな自然な表情。室内の自然光、背景に工場の機械をぼかす。円形トリミング前提の中央構図、親しみと誠実さのある佇まい。1:1。' },
+    { imgId: 'voice-logistics', label: '運送業 管理者', quote: '拘束時間のチェックが、ぐっと楽になりました。', base: '運送会社の50代日本人男性管理者のバストアップ。制服姿で落ち着いた誠実な表情。屋外の柔らかい光、背景にトラックの車体をぼかす。円形トリミング前提の中央構図、頼れるベテランの佇まい。1:1。' },
+    { imgId: 'voice-food', label: '飲食店 オーナー', quote: 'シフト作りに潰れていた日曜が、返ってきました。', base: '小さな飲食店の40代日本人女性オーナーのバストアップ。エプロン姿で柔らかい笑み。暖色の店内照明、背景に厨房やカウンターをぼかす。円形トリミング前提の中央構図、温かみと親しみのある佇まい。1:1。' },
+    { imgId: 'voice-agri', label: '農家', quote: '組合提出の書類に、もう悩まなくなりました。', base: '茶農家の60代日本人男性のバストアップ。作業着と帽子、日焼けした穏やかな表情。朝の自然光、背景に茶畑の畝をぼかす。円形トリミング前提の中央構図、土に根ざした実直な佇まい。1:1。' },
+    { imgId: 'voice-solo', label: 'ひとり親方', quote: '請求書を夜にやらなくて、よくなりました。', base: '建設のひとり親方の40代日本人男性のバストアップ。作業着姿で頼もしい自然な表情。夕方の斜光、背景に軽トラや道具をぼかす。円形トリミング前提の中央構図、腕のいい職人らしい佇まい。1:1。' },
+  ];
+
+  docData = [
+    { imgId: 'doc-daily-report', label: '日報', base: '手書きの作業日報用紙が使い込まれた木の机に置かれ、ボールペンと小さなメモが添えられている。真俯瞰の構図、窓から差し込む自然光、暖色のトーン、紙の繊維と鉛筆の筆圧跡まで写り込む質感、現場の生活感。1:1。' },
+    { imgId: 'doc-photo-ledger', label: '工事写真台帳', base: '建設現場の写真プリントが複数枚、クリアファイルと分厚い台帳に整理されて机に並ぶ様子。真俯瞰、自然光、現場の埃感と紙のよれ、付箋やインデックスの生活感まで写し込む質感、実務のリアルさ。1:1。' },
+    { imgId: 'doc-shift', label: 'シフト表', base: '手書きのシフト表と、バイトからの希望が並ぶスマホのメッセージ画面が隣り合う机上。真俯瞰、暖色の室内光、消しゴム跡や書き込みの残る飲食店の生活感のある質感、手作業の温度。1:1。' },
+    { imgId: 'doc-invoice', label: '請求書', base: '手書きの請求書と伝票が積み重なった机上のクローズアップ。斜め俯瞰、電卓と朱肉の判子を添えて、紙のしわと数字の書き込み、夜の事務作業の生々しい質感と疲労の気配。1:1。' },
+    { imgId: 'doc-cultivation', label: '栽培記録', base: '農業用の栽培記録ノートが畑の畦に無造作に置かれ、土のついた手袋と収穫前の作物が写り込む。斜光の自然光、土と紙の質感、日付や気温の手書き記録が見える現場の生活感。1:1。' },
+    { imgId: 'doc-estimate', label: '見積書', base: '現場のメモ用紙、電卓、養生テープ、鉛筆が軽トラの荷台に置かれた平置き。夕方の斜光、金属の荷台と紙の対比、現場の砂埃と使い込まれた道具の質感、職人の日常。1:1。' },
+  ];
+
+  statData = [
+    { imgId: 'stat-hours', number: '125', unit: '時間/年', label: '転記に使う時間', base: '積み上がった1年分の日報ファイルの山を横から捉える。膨大な時間量を象徴する高さ、窓からの自然光、背表紙の日付ラベルと紙の質感、暖色のトーン、事務作業の重みが伝わる静物。16:9。' },
+    { imgId: 'stat-days', number: '250', unit: '日/年', label: '稼働する日数', base: 'めくられた卓上カレンダーに稼働日の印がびっしり書き込まれた机上。真俯瞰、暖色の室内光、ペンと手帳を添えて、日々の積み重ねと働き詰めの日常を感じさせる質感。16:9。' },
+    { imgId: 'stat-minutes', number: '30', unit: '分/日', label: '毎日の作業', base: '砂時計または卓上時計と手書き伝票を並べた机上の静物。朝の柔らかい光、毎日30分という時間の経過を象徴する構図、紙とガラスの質感、静かな緊張感。16:9。' },
+  ];
+
+  galleryData = [
+    { imgId: 'gallery-office', label: '深夜の事務所', base: '深夜、無人の小さな事務所。散らかった机に書類の山とノートパソコンだけが残り、画面の光だけが室内を照らす。シネマティックな深い影、暗色に一点の暖色光、静けさと疲労の余韻が漂う情景。16:9。' },
+    { imgId: 'gallery-handwritten', label: '手書き日報の山', base: '積み上げられた手書き日報と伝票の山を捉えたクローズアップ。斜め俯瞰、暖色の手元灯、紙の黄ばみと手垢、付箋やクリップの生活感まで写し込む質感、実務の重みが伝わる情景。16:9。' },
+    { imgId: 'gallery-phone', label: '現場で撮る', base: '現場で書類をスマホ撮影する日本人作業員の手元の寄り。屋外の自然光、軍手や汚れた指、撮影する瞬間の動作の生々しさと現場の砂埃の質感、リアルなドキュメンタリー。16:9。' },
+    { imgId: 'gallery-truck', label: '軽トラと道具', base: '軽トラの荷台に道具箱と養生資材が無造作に積まれた様子。夕方の斜光、金属の荷台の傷と土埃、三河の現場のリアルな生活感と使い込まれた道具の質感。16:9。' },
+    { imgId: 'gallery-tea', label: '西尾の茶畑', base: '西尾あたりの茶畑の整然とした畝を、朝霧が残る中で捉える。柔らかい自然光、緑と土の階調、遠くに山並みをぼかす奥行き、地域の実在感のある静かな情景。16:9。' },
+    { imgId: 'gallery-factory', label: '夜の町工場', base: '夜の町工場の外観、窓から漏れる作業灯の光。暗色の空に暖色の光が滲む、ものづくりの現場の静かな緊張感と稼働の気配、生活と労働の実在感。16:9。' },
+  ];
+
+  industryData = [
+    { tag: '建設・土木', before: '深夜に現場写真をエクセルへ手貼り', afterPrefix: '写真50枚規模の整理も、', afterStrong: '工事写真台帳としてまとめて対応', afterSuffix: 'できます', imgId: 'industry-construction', base: '建設現場でヘルメットを被った日本人職人がスマホで現場写真を撮っている様子。土埃感のある現場、自然光、35mm、動作が伝わる構図。4:3。' },
+    { tag: '製造業（部品・加工）', before: '手書き日報を毎朝エクセル転記', afterPrefix: '手書き日報の転記も、', afterStrong: '集計済みエクセルとして対応', afterSuffix: 'できます', imgId: 'industry-manufacturing', base: '町工場の中で手書きの作業日報に記入する日本人従業員の手元。機械や部品が背景にぼんやり写り込む、暖色の室内光、35mm。4:3。' },
+    { tag: '運送業', before: '運転日報の手集計、拘束時間チェック', afterPrefix: '運転日報の集計・', afterStrong: '運行記録簿として対応', afterSuffix: 'できます', imgId: 'industry-logistics', base: 'トラックの荷台の前で運転日報を記入する日本人ドライバー。夕方の斜光、制服と車体の質感、拘束時間や走行記録を書き込む手元まで写す現場感のある構図、35mm。4:3。' },
+    { tag: '飲食・美容', before: 'バイトの希望LINEからシフトを手組み', afterPrefix: '希望LINEからの', afterStrong: '1か月分のシフト表として対応', afterSuffix: 'できます', imgId: 'industry-food', base: '小さな飲食店のレジ前で日本人スタッフがシフト表とスマホを見比べている様子。暖色の店内照明、厨房やメニューをぼかした背景、飾らない生活感と忙しさが伝わる構図、35mm。4:3。' },
+    { tag: '農業（野菜・茶・養鰻）', before: '栽培履歴・水質記録の手書き提出、家事按分の悩み', afterPrefix: '栽培・水質記録の', afterStrong: '組合提出様式・按分済み仕訳として対応', afterSuffix: 'できます', imgId: 'industry-agri', base: '茶畑か田んぼで農作業をしながら手元のノートに栽培記録をつける日本人農家。朝の自然光、土と作物の質感、日焼けした手や長靴まで写す、地に足のついた現場感のある構図、35mm。4:3。' },
+    { tag: 'ひとり親方・工事店', before: '見積・請求書とインボイス対応が夜の宿題', afterPrefix: '現場メモの', afterStrong: 'インボイス対応請求書として対応', afterSuffix: 'できます', imgId: 'industry-solo', base: '一人親方の日本人男性が軽トラの荷台を作業台にして見積書を書いている様子。夕方の斜光、道具箱や資材、砂埃と使い込まれた軍手まで写り込む、職人の日常が伝わる現場感のある構図、35mm。4:3。' },
+  ];
+
+  industryTagData = [
+    '建設業', '土木工事業', '電気工事業', '内装業', '解体業', '造園業',
+    '製造業', '部品加工業', '町工場', '運送業', '物流業', '倉庫業',
+    '飲食店', '美容室・理容室', '介護事業所', '訪問看護', '保育・学童',
+    '農業（野菜）', '農業（茶）', '養殖業', '自動車整備業', '不動産業',
+    '士業事務所', '小売店', '卸売業', '清掃業', '警備業', '宿泊業',
+  ];
+
+  imgSrcMap = {
+    'voice-construction': 'images/industry-construction.webp',
+    'voice-manufacturing': 'images/industry-manufacturing.webp',
+    'voice-logistics': 'images/industry-logistics.webp',
+    'voice-food': 'images/industry-food.webp',
+    'voice-agri': 'images/industry-agri.webp',
+    'voice-solo': 'images/industry-solo.webp',
+    'doc-daily-report': 'images/carousel-daily-report.webp',
+    'doc-photo-ledger': 'images/carousel-photo-ledger.webp',
+    'doc-shift': 'images/carousel-shift.webp',
+    'doc-invoice': 'images/carousel-invoice.webp',
+    'doc-cultivation': 'images/carousel-cultivation.webp',
+    'doc-estimate': 'images/carousel-estimate.webp',
+    'industry-construction': 'images/industry-construction.webp',
+    'industry-manufacturing': 'images/industry-manufacturing.webp',
+    'industry-logistics': 'images/industry-logistics.webp',
+    'industry-food': 'images/industry-food.webp',
+    'industry-agri': 'images/industry-agri.webp',
+    'industry-solo': 'images/industry-solo.webp',
+    'stat-hours': 'images/stat-cost.webp',
+    'stat-days': 'images/stat-industries.webp',
+    'stat-minutes': 'images/stat-learn.webp',
+    'gallery-office': 'images/gallery-office.webp',
+    'gallery-handwritten': 'images/gallery-handwritten.webp',
+    'gallery-phone': 'images/gallery-phone.webp',
+    'gallery-truck': 'images/gallery-truck.webp',
+    'gallery-tea': 'images/stat-trial.webp',
+    'gallery-factory': 'images/gallery-office.webp',
+  };
+
+  renderVals() {
+    const ad = this.AD;
+    const openFaq = this.state.openFaq;
+    const industryLayout = this.props.industryLayout ?? 'grid';
+    const pr = {};
+    for (const k in this.inlinePrompts) pr[k] = this.inlinePrompts[k] + ad;
+    const srcOf = (id) => this.imgSrcMap[id] || '';
+    return {
+      pr,
+      faqItems: this.faqData.map((item, i) => ({
+        q: item.q,
+        a: item.a,
+        isOpen: openFaq === i,
+        icon: openFaq === i ? '－' : '＋',
+        toggle: () => this.setState(s => ({ openFaq: s.openFaq === i ? -1 : i })),
+      })),
+      voices: this.voiceData.map(v => ({ imgId: v.imgId, imgSrc: srcOf(v.imgId), label: v.label, quote: v.quote, prompt: v.base + ad })),
+      docs: this.docData.map(d => ({ imgId: d.imgId, imgSrc: srcOf(d.imgId), label: d.label, prompt: d.base + ad })),
+      stats: this.statData.map(s => ({ imgId: s.imgId, imgSrc: srcOf(s.imgId), number: s.number, unit: s.unit, label: s.label, prompt: s.base + ad })),
+      gallery: this.galleryData.map(g => ({ imgId: g.imgId, imgSrc: srcOf(g.imgId), label: g.label, prompt: g.base + ad })),
+      industries: this.industryData.map(i => ({ ...i, imgSrc: srcOf(i.imgId), prompt: i.base + ad })),
+      industryTags: this.industryTagData.map(name => ({ name })),
+      showFollowBar: this.props.showFollowBar ?? true,
+      showGallery: this.props.showGallery ?? true,
+      isGridLayout: industryLayout !== 'scroll',
+      isScrollLayout: industryLayout === 'scroll',
+    };
+  }
+}
+</script>
+</body>
+</html>
