@@ -1,2 +1,5 @@
 /lifecreate /lifecreate/ 301
 /lifecreate/* https://ai-ustyle.co.jp/lifecreate/:splat 301
+
+# AI配車係育成シミュレーター（完全独立デモページ）
+/transportation /transportation/ 200
