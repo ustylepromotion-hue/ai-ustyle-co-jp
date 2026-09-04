@@ -9,5 +9,10 @@ compatibility_date = "2026-07-07"
 directory = "./public"
 binding = "ASSETS"
 
+[[d1_databases]]
+binding = "DB"
+database_name = "ai-ustyle-marunage-chat"
+database_id = "4474aece-1535-4a1e-8bc5-754863f07ec4"
+
 [observability]
 enabled = true

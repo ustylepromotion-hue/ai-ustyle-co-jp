@@ -393,6 +393,30 @@ blockquote p{font-size:clamp(1rem,1.6vw,1.2rem);color:rgba(240,244,248,.8);line-
 .contact .section-header{position:relative;z-index:1}
 .contact-wrap{margin-top:4rem}
 .contact-form{background:linear-gradient(160deg,rgba(255,255,255,.04),rgba(255,255,255,.01));border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:3.5rem;max-width:760px}
+.contact-chat{display:flex;flex-direction:column;gap:1.2rem}
+.contact-chat-heading{display:grid;gap:.45rem}
+.contact-chat-label{display:inline-flex;align-items:center;width:max-content;padding:.28rem .7rem;border:1px solid rgba(59,130,246,.35);border-radius:999px;color:var(--primary);font-size:.68rem;font-weight:700;letter-spacing:.16em}
+.contact-chat-heading h3{margin:0;color:#f0f4f8;font-size:clamp(1.2rem,2.4vw,1.5rem);font-weight:800}
+.contact-chat-heading p{margin:0;color:var(--muted);font-size:.92rem;line-height:1.7}
+.contact-chat-log{min-height:220px;max-height:380px;overflow-y:auto;display:flex;flex-direction:column;gap:.75rem;padding:1rem;border:1px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(7,9,14,.46)}
+.contact-chat-message{max-width:88%;padding:.78rem 1rem;border-radius:12px;font-size:.92rem;line-height:1.75;white-space:pre-wrap;overflow-wrap:anywhere}
+.contact-chat-message--assistant{align-self:flex-start;background:rgba(255,255,255,.08);color:rgba(240,244,248,.95)}
+.contact-chat-message--user{align-self:flex-end;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff}
+.contact-chat-message--error{align-self:flex-start;background:rgba(239,68,68,.12);border:1px solid rgba(248,113,113,.35);color:#fecaca}
+.contact-chat-message--typing::after{content:'';display:inline-block;width:.4rem;height:.4rem;margin-left:.55rem;border-radius:50%;background:currentColor;animation:contact-chat-pulse 1s ease-in-out infinite}
+.contact-chat-composer{position:relative;display:flex;align-items:flex-end;gap:.8rem}
+.contact-chat-composer::before{content:'';position:absolute;z-index:1;top:1.05rem;left:1rem;width:2px;height:1.45rem;border-radius:999px;background:var(--primary);box-shadow:0 0 10px var(--primary-glow);pointer-events:none;animation:contact-chat-input-guide 1.05s step-end infinite}
+.contact-chat-composer:has(.contact-chat-input:focus)::before,.contact-chat-composer:has(.contact-chat-input:not(:placeholder-shown))::before,.contact-chat-composer:has(.contact-chat-input:disabled)::before{opacity:0;animation:none}
+.contact-chat-input{flex:1;min-width:0;min-height:50px;max-height:150px;resize:none;width:100%;background:linear-gradient(135deg,rgba(59,130,246,.12),rgba(255,255,255,.04));border:1px solid rgba(96,165,250,.9);border-radius:10px;padding:.85rem 1rem .85rem 1.65rem;color:var(--text);font-family:var(--font);font-size:.95rem;line-height:1.65;box-shadow:0 0 0 1px rgba(59,130,246,.16),0 0 18px rgba(59,130,246,.12);transition:border-color .2s,box-shadow .2s,background .2s}
+.contact-chat-input:focus{outline:none;border-color:#93c5fd;background:rgba(59,130,246,.14);box-shadow:0 0 0 3px var(--primary-dim),0 0 22px rgba(59,130,246,.2)}
+.contact-chat-input::placeholder{color:rgba(219,234,254,.62)}
+.contact-chat-send{flex-shrink:0}
+.contact-chat-send:disabled,.contact-chat-input:disabled{opacity:.55;cursor:default}
+.contact-chat-footer{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.contact-chat-footer p{margin:0;color:var(--muted);font-size:.78rem;line-height:1.6;flex:1}
+.contact-chat-footer .btn-line{padding:.75rem 1.35rem}
+@keyframes contact-chat-pulse{50%{opacity:.25;transform:scale(.7)}}
+@keyframes contact-chat-input-guide{50%{opacity:.12}}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
 .form-group{margin-bottom:1.8rem}
 .form-group label{display:block;font-size:.82rem;letter-spacing:.08em;color:var(--muted);margin-bottom:.6rem}
@@ -428,6 +452,8 @@ blockquote p{font-size:clamp(1rem,1.6vw,1.2rem);color:rgba(240,244,248,.8);line-
 @media(max-width:768px){
   .contact-confirm{padding:2rem 1.5rem}
   .confirm-row{grid-template-columns:1fr;gap:.3rem}
+  .contact-chat-composer{align-items:stretch;flex-direction:column}
+  .contact-chat-send{justify-content:center}
 }
 
 /* ============================
@@ -533,6 +559,16 @@ blockquote p{font-size:clamp(1rem,1.6vw,1.2rem);color:rgba(240,244,248,.8);line-
 .pricing-table td{color:rgba(240,244,248,.88)}
 .pricing-table tbody tr:last-child td{border-bottom:none}
 .pricing-table td:first-child{width:3rem;color:var(--primary);font-weight:700;text-align:center}
+/* AI伴走パートナー 料金比較表 */
+.pricing-compare{min-width:640px}
+.pricing-compare th:first-child,.pricing-compare td:first-child{width:auto;text-align:left;color:rgba(240,244,248,.9);font-weight:600}
+.pricing-compare th{white-space:nowrap;text-align:center}
+.pricing-compare td{text-align:center}
+.pricing-compare .plan-price{font-size:1.3rem;font-weight:800;color:#fff;white-space:nowrap}
+.pricing-compare .plan-ask{font-size:1.05rem;font-weight:800;color:var(--primary);white-space:nowrap}
+.pricing-compare .ok{color:var(--primary);font-weight:700}
+.pricing-compare .ng{color:rgba(139,152,169,.45)}
+.pricing-compare .badge{display:inline-block;padding:.2rem .6rem;border:1px solid rgba(59,130,246,.5);border-radius:999px;color:var(--primary);font-size:.68rem;font-weight:700;letter-spacing:.08em;vertical-align:middle;margin-left:.3rem}
 @media(max-width:768px){
   .pricing-price-value{font-size:1.5rem}
   .pricing-h3{font-size:1rem}

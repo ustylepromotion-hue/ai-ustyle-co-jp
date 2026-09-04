@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "project": "ai-ustyle-co-jp-web",
+  "domain": "ai-ustyle.co.jp",
+  "description": "Protected main-page files. Non-main Pages deployments must preserve these paths byte-for-byte.",
+  "paths": {
+    "index.html": "8c0fca5f01892dc7c51ccce9c5b2d72b0fbd4583c3cd4b2f662616b6d74134bf",
+    "main.js": "3c4523b07a44968b3434e7d286488e2cd8218cee3260650bde946e6428bf6c0e",
+    "style.css": "e51bf44a01fc1d2c5e0d8d430c7aa504579889d5363e3b628572ee424a97bd2d",
+    "assets/business_tech.jpg": "312dc7de12898bfbf5e359ed14c2380bac570b9fee97e886a2195a120253e940",
+    "assets/contact_image.png": "87253195f40845f32c794fa32f046c0df5aa1f73530e97c679d7fbd4a8933b7c",
+    "assets/hero_bg.jpg": "7195d3edec0a48c1b8f0b14bc81652969d3d4bac10704e367951ce863e262d85",
+    "assets/performance_tech.jpg": "27dbfeecb2c8e04073d3646db220941932ef33031e630e388cf1be978b596b4a",
+    "assets/security_tech.jpg": "3db301d3bb72014b054cedf03c5bfc45a4d23c1670fc1d498d5657a027f749c9",
+    "assets/solution_auto.jpg": "4bfe54775067fbffc76119cf0d2c473e9bee2af81010994bfff026e60e411e08",
+    "assets/solution_llm.jpg": "95f0393577e893657e231415368374f8fa2293f3c1acb4f483c69150368aefd3",
+    "assets/tech_growth.jpg": "e4335af3da32747ad089ebd33821b98a34bb5f2144128b7ce452f307638ddef9",
+    "screenshots/usecase/01-bulk-upload.png": "a8c70a6c7bac5c73154077b6d960052cfaa1afbe05279889018bd8b42dbd2c82"
+  }
+}

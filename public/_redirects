@@ -3,3 +3,7 @@
 
 # AI配車係育成シミュレーター（完全独立デモページ）
 /transportation /transportation/ 200
+
+# mori.care is served by the dedicated apex Worker; www remains Pages-owned.
+/care https://ai-ustyle.co.jp/care/ 301
+/care/* https://ai-ustyle.co.jp/care/:splat 301

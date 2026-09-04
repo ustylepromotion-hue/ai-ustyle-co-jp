@@ -19,7 +19,7 @@
 <!-- Header -->
 <header class="header" id="header">
   <div class="header-inner">
-    <div class="logo">U-STYLE</div>
+    <a class="logo" href="https://www.ai-ustyle.co.jp/" aria-label="U-STYLE トップページ">U-STYLE</a>
     <nav class="header-nav desktop-only">
       <a href="#solutions">業務内容</a>
       <a href="#process">導入フロー</a>
@@ -270,7 +270,7 @@
     <div class="message-inner reveal-up">
       <span class="section-label">04. 料金について</span>
       <blockquote>
-        <p>「AI業務診断（55,000円〜）」「AI業務アプリ開発パートナー（初期80万円〜／月額198,000円〜）」「AI人材育成プログラム（150万円〜）」の3つのプランをご用意。</p>
+        <p>「AI業務診断（50,000円〜）」「AI業務伴走パートナー（月額98,000円〜）」「AI人材育成プログラム（ASK〜）」の3つのプランをご用意。</p>
         <p>各プランの詳細・含まれる内容・ご利用の流れは、料金ページにまとめています。</p>
       </blockquote>
       <div class="message-actions">
@@ -322,52 +322,24 @@
       <p class="contact-lead">過去に導入でつまずいた方もまずはお気軽にご相談ください。<br>わかりやすく丁寧にご案内いたします。</p>
     </div>
     <div class="contact-wrap">
-      <form class="contact-form reveal-up" id="contactForm" action="https://api.web3forms.com/submit" method="POST">
-        <input type="hidden" name="access_key" value="b306ae84-ca12-4231-a6e9-d3fd0b4eee73">
-        <input type="hidden" name="subject" value="【お問い合わせ】株式会社ユースタイル">
-        <input type="hidden" name="from_name" value="U-STYLE LP">
-        <input type="hidden" name="replyto" id="ccField" value="">
-        <div class="form-row">
-          <div class="form-group">
-            <label>お名前 <span class="required">必須</span></label>
-            <input type="text" name="お名前" placeholder="山田 太郎" required>
-          </div>
-          <div class="form-group">
-            <label>会社名</label>
-            <input type="text" name="会社名" placeholder="株式会社〇〇">
-          </div>
+      <section class="contact-form contact-chat reveal-up" data-ustyle-chat data-endpoint="https://ai-ustyle-co-jp-worker.ustyle-promotion.workers.dev/api/chat/stream" aria-label="AIチャットで無料相談">
+        <div class="contact-chat-heading">
+          <span class="contact-chat-label">AI CHAT</span>
+          <h3>AIチャットで無料相談</h3>
+          <p>気になることを、そのまま入力してください。</p>
         </div>
-        <div class="form-group">
-          <label>メールアドレス <span class="required">必須</span></label>
-          <input type="email" name="email" placeholder="taro@example.com" required>
+        <div class="contact-chat-log" data-ustyle-chat-log role="log" aria-live="polite" aria-label="AIチャットの会話">
+          <div class="contact-chat-message contact-chat-message--assistant">こんにちは。AI導入や業務のご相談をお聞かせください。</div>
         </div>
-        <div class="form-group">
-          <label>ご相談内容</label>
-          <textarea name="ご相談内容" rows="5" placeholder="AIの導入について検討しています..."></textarea>
+        <div class="contact-chat-composer">
+          <textarea class="contact-chat-input" data-ustyle-chat-input rows="1" maxlength="2000" placeholder="例：AIを使って、どんな業務を効率化できるか相談したい"></textarea>
+          <button type="button" class="btn-submit contact-chat-send" data-ustyle-chat-send>送信 <span class="btn-arrow">→</span></button>
         </div>
-        <div class="form-actions">
-          <button type="submit" class="btn-submit">入力内容を確認する <span class="btn-arrow">→</span></button>
-          <span class="form-or">または</span>
+        <div class="contact-chat-footer">
+          <p>送信内容に合わせてご案内します。</p>
           <a href="https://lin.ee/oq0a0Ic" class="btn-line" target="_blank" rel="noopener">LINEで無料相談 →</a>
         </div>
-      </form>
-
-      <!-- Confirmation panel: hidden until form is submitted with valid input -->
-      <div class="contact-confirm reveal-up" id="contactConfirm" hidden>
-        <h3 class="confirm-title">この内容で送信します</h3>
-        <p class="confirm-note">内容に誤りがないかご確認ください。修正する場合は「内容を修正する」を押してください。</p>
-        <dl class="confirm-list">
-          <div class="confirm-row"><dt>お名前</dt><dd id="cf-name"></dd></div>
-          <div class="confirm-row"><dt>会社名</dt><dd id="cf-company"></dd></div>
-          <div class="confirm-row"><dt>メールアドレス</dt><dd id="cf-email"></dd></div>
-          <div class="confirm-row"><dt>ご相談内容</dt><dd id="cf-message"></dd></div>
-        </dl>
-        <div class="form-actions">
-          <button type="button" class="btn-ghost" id="confirmEdit">← 内容を修正する</button>
-          <button type="button" class="btn-submit" id="confirmSend">この内容で送信する <span class="btn-arrow">→</span></button>
-        </div>
-        <p class="confirm-status" id="confirmStatus" aria-live="polite"></p>
-      </div>
+      </section>
     </div>
   </div>
 </section>

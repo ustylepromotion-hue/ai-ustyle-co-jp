@@ -903,135 +903,129 @@ window.addEventListener('orientationchange', () => {
   setTimeout(resyncViewportState, 250);
 });
 
-/* ---------- CONTACT FORM (confirm → send) ---------- */
-const form = document.getElementById('contactForm');
-if(form){
-  const endpoint = form.action;
-  const confirmPanel = document.getElementById('contactConfirm');
-  const confirmStatus = document.getElementById('confirmStatus');
-  const sendBtn = document.getElementById('confirmSend');
-  const editBtn = document.getElementById('confirmEdit');
+/* ---------- CONTACT AI CHAT ---------- */
+const contactChat = document.querySelector('[data-ustyle-chat]');
+if(contactChat){
+  const log = contactChat.querySelector('[data-ustyle-chat-log]');
+  const input = contactChat.querySelector('[data-ustyle-chat-input]');
+  const sendBtn = contactChat.querySelector('[data-ustyle-chat-send]');
+  const endpoint = contactChat.dataset.endpoint || '/api/chat/stream';
+  const MAX_HISTORY_ENTRIES = 8;
+  const MAX_HISTORY_CHARS = 8000;
+  const FETCH_TIMEOUT_MS = 50000;
+  const history = [];
+  let busy = false;
 
-  const fields = {
-    name:    { sel: 'input[name="お名前"]',    out: 'cf-name',    fallback: '（未入力）' },
-    company: { sel: 'input[name="会社名"]',    out: 'cf-company', fallback: '（未入力）' },
-    email:   { sel: 'input[name="email"]',     out: 'cf-email',   fallback: '（未入力）' },
-    message: { sel: 'textarea[name="ご相談内容"]', out: 'cf-message', fallback: '（未入力）' }
+  const scrollLog = () => { log.scrollTop = log.scrollHeight; };
+  const appendMessage = (kind, text = '') => {
+    const message = document.createElement('div');
+    message.className = `contact-chat-message contact-chat-message--${kind}`;
+    message.textContent = text;
+    log.appendChild(message);
+    scrollLog();
+    return message;
   };
-
-  const showForm = () => {
-    confirmPanel.hidden = true;
-    form.hidden = false;
-    if(confirmStatus) confirmStatus.textContent = '';
-    sendBtn.disabled = false;
-    sendBtn.innerHTML = 'この内容で送信する <span class="btn-arrow">→</span>';
-    sendBtn.style.background = '';
+  const resizeInput = () => {
+    input.style.height = 'auto';
+    input.style.height = `${Math.min(input.scrollHeight, 150)}px`;
   };
-
-  const showConfirm = () => {
-    Object.values(fields).forEach(({sel, out, fallback}) => {
-      const el = form.querySelector(sel);
-      const out_el = document.getElementById(out);
-      if(!el || !out_el) return;
-      const v = (el.value || '').trim();
-      out_el.textContent = v || fallback;
-      out_el.classList.toggle('confirm-empty', !v);
-    });
-    form.hidden = true;
-    confirmPanel.hidden = false;
-    confirmPanel.scrollIntoView({behavior:'smooth', block:'start'});
+  const historyForRequest = () => {
+    const kept = [];
+    let chars = 0;
+    for(const turn of history.slice(-MAX_HISTORY_ENTRIES).reverse()){
+      if(chars >= MAX_HISTORY_CHARS) break;
+      const content = String(turn.content || '').slice(0, MAX_HISTORY_CHARS - chars);
+      if(!content) continue;
+      kept.unshift({role:turn.role === 'assistant' ? 'assistant' : 'user', content});
+      chars += content.length;
+    }
+    return kept;
   };
-
-  // First submit: validate via native HTML5, then show confirm panel instead of sending.
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    if(!form.reportValidity()) return;
-    // Sync CC field with user email so they receive a copy.
-    const userEmail = form.querySelector('input[name="email"]').value.trim();
-    const ccField = form.querySelector('#ccField');
-    if(ccField) ccField.value = userEmail;
-    showConfirm();
-  });
-
-  if(editBtn){
-    editBtn.addEventListener('click', () => { showForm(); form.scrollIntoView({behavior:'smooth', block:'start'}); });
-  }
-
-  if(sendBtn){
-    sendBtn.addEventListener('click', async () => {
-      sendBtn.disabled = true;
-      sendBtn.textContent = '送信中...';
-      if(confirmStatus) confirmStatus.innerHTML = '';
-
-      const data = {};
-      Object.values(fields).forEach(({sel, out}) => {
-        const el = form.querySelector(sel);
-        if(el) data[out.replace('cf-','')] = el.value.trim();
-      });
-      data['email'] = form.querySelector('input[name="email"]').value.trim();
-
-      try {
-        const userEmail = form.querySelector('input[name="email"]').value.trim();
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({
-            access_key: 'b306ae84-ca12-4231-a6e9-d3fd0b4eee73',
-            subject:  '【お問い合わせ】株式会社ユースタイル',
-            from_name:'U-STYLE LP',
-            name:    form.querySelector('input[name="お名前"]').value.trim(),
-            company: form.querySelector('input[name="会社名"]').value.trim(),
-            email:   userEmail,
-            message: form.querySelector('textarea[name="ご相談内容"]').value.trim(),
-            replyto: userEmail,
-            cc:      userEmail,
-          }),
-        });
-        const payload = await res.json().catch(() => ({}));
-        if(!res.ok || payload.success === false) {
-          const e = new Error(payload.message || 'HTTP ' + res.status);
-          e.detail = payload.detail || null;
-          e.raw = payload.raw || null;
-          e.http_status = payload.http_status !== undefined ? payload.http_status : res.status;
-          e.access_key_set = payload.access_key_set !== undefined ? payload.access_key_set : '—';
-          throw e;
-        }
-
-        sendBtn.textContent = '送信しました ✓';
-        sendBtn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
-        if(confirmStatus) confirmStatus.textContent = 'お問い合わせを受け付けました。担当者よりご連絡いたします。';
-        setTimeout(() => { form.reset(); showForm(); }, 4500);
-
-      } catch(err) {
-        sendBtn.disabled = false;
-        sendBtn.textContent = '再試行する';
-        sendBtn.style.background = 'linear-gradient(135deg,#ef4444,#b91c1c)';
-        console.error('[contact form]', err);
-        if(confirmStatus){
-          confirmStatus.innerHTML =
-            '<strong style="color:#f87171">送信に失敗しました。</strong>' +
-            '<details style="margin-top:.5rem"><summary style="cursor:pointer;font-size:.8rem;color:rgba(240,244,248,.6)">エラーログ</summary>' +
-            '<pre style="font-size:.72rem;margin-top:.4rem;white-space:pre-wrap;color:rgba(240,244,248,.55)">' +
-            'message       : ' + (err.message||'—') + '\n' +
-            'detail        : ' + (err.detail||'—') + '\n' +
-            'http_status   : ' + (err.http_status||'—') + '\n' +
-            'access_key_set: ' + err.access_key_set + '\n' +
-            'raw           : ' + (err.raw||'—') + '\n' +
-            'endpoint      : ' + endpoint + '\n' +
-            'time          : ' + new Date().toISOString() +
-            '</pre></details>' +
-            '<p style="margin-top:.7rem;font-size:.88rem">LINEでのご相談もご利用ください。</p>';
-        }
+  const fixedClientError = status => status === 429
+    ? 'ただいまご利用が集中しています。少し時間を置いてもう一度お試しください。'
+    : 'うまく送信できませんでした。少し時間を置いてもう一度お試しください。';
+  const parseSseBlock = (block, onDelta) => {
+    let eventName = '';
+    const dataLines = [];
+    for(const line of block.replace(/\r/g, '').split('\n')){
+      if(line.startsWith('event:')) eventName = line.slice(6).trim();
+      if(line.startsWith('data:')) dataLines.push(line.slice(5).replace(/^ /, ''));
+    }
+    if(!dataLines.length) return false;
+    let payload;
+    try { payload = JSON.parse(dataLines.join('\n')); } catch { throw new Error('stream_protocol_error'); }
+    if(eventName === 'delta' && typeof payload.delta === 'string') { onDelta(payload.delta); return false; }
+    if(eventName === 'error') throw new Error('server_error');
+    return eventName === 'done';
+  };
+  const readSse = async (response, onDelta) => {
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let doneEvent = false;
+    const consume = block => { if(parseSseBlock(block, onDelta)) doneEvent = true; };
+    try {
+      while(true){
+        const {done, value} = await reader.read();
+        if(done) break;
+        buffer += decoder.decode(value, {stream:true});
+        const parts = buffer.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n\n');
+        buffer = parts.pop() || '';
+        parts.forEach(consume);
       }
-    });
-  }
-
-  // Input focus glow
-  form.querySelectorAll('input,textarea').forEach(el => {
-    el.addEventListener('focus', () => {
-      el.parentElement.style.setProperty('--glow','1');
-    });
-  });
+      buffer += decoder.decode();
+      if(buffer.trim()) consume(buffer);
+    } finally {
+      try { await reader.cancel(); } catch { /* noop */ }
+    }
+    if(!doneEvent) throw new Error('stream_protocol_error');
+  };
+  const submit = async () => {
+    const text = input.value.trim();
+    if(!text || busy) return;
+    busy = true;
+    input.value = '';
+    resizeInput();
+    input.disabled = true;
+    sendBtn.disabled = true;
+    appendMessage('user', text);
+    const assistantMessage = appendMessage('assistant', '');
+    assistantMessage.classList.add('contact-chat-message--typing');
+    const controller = new AbortController();
+    let timeoutId;
+    let status = 0;
+    let answer = '';
+    try {
+      timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+      const response = await fetch(endpoint, {
+        method:'POST',
+        headers:{'content-type':'application/json'},
+        body:JSON.stringify({message:text, history:historyForRequest()}),
+        signal:controller.signal,
+      });
+      status = response.status;
+      if(!response.ok || !response.body) throw new Error(`http_${status}`);
+      await readSse(response, delta => {
+        answer += delta;
+        assistantMessage.classList.remove('contact-chat-message--typing');
+        assistantMessage.textContent = answer;
+        scrollLog();
+      });
+      if(!answer.trim()) throw new Error('empty_reply');
+      history.push({role:'user', content:text}, {role:'assistant', content:answer});
+    } catch {
+      assistantMessage.className = 'contact-chat-message contact-chat-message--error';
+      assistantMessage.textContent = fixedClientError(status);
+    } finally {
+      if(timeoutId) clearTimeout(timeoutId);
+      busy = false;
+      input.disabled = false;
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  };
+  sendBtn.addEventListener('click', submit);
+  input.addEventListener('input', resizeInput);
 }
 
 /* ---------- SMOOTH ANCHOR SCROLL ---------- */
@@ -1060,6 +1054,14 @@ if ('scrollRestoration' in history) {
   history.scrollRestoration = 'manual';
 }
 window.addEventListener('pageshow', (e) => {
+  // メインページ(index)へアクセスした場合は、必ずスクロール位置を初期値(トップ)にする。
+  // ロゴ(https://www.ai-ustyle.co.jp/)から遷移してきた場合も、保存済みの位置は復元しない。
+  const isTopPage = location.pathname === '/' || location.pathname === '/index.html';
+  if (isTopPage) {
+    sessionStorage.removeItem('returnScroll');
+    window.scrollTo(0, 0);
+    return;
+  }
   const raw = sessionStorage.getItem('returnScroll');
   if (raw === null) return;
   let data;
