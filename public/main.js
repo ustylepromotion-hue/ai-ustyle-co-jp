@@ -1054,6 +1054,29 @@ if ('scrollRestoration' in history) {
   history.scrollRestoration = 'manual';
 }
 window.addEventListener('pageshow', (e) => {
+  // 他ページ(料金ページ等)の「まずは無料で相談する」CTA は index#contact へ直リンクしてくる。
+  // 標準の #contact アンカージャンプは下のトップ復帰処理と競合して効かないため、
+  // ページ先頭には置かず、チャットボックス(.contact-chat)がヘッダー直下に来る位置まで矯正スクロールする。
+  if (location.hash === '#contact') {
+    sessionStorage.removeItem('returnScroll');
+    const chat = document.querySelector('.contact-chat[data-ustyle-chat]');
+    if (chat) {
+      const targetY = () => {
+        const top = chat.getBoundingClientRect().top + window.pageYOffset - (header ? header.offsetHeight : 0);
+        return top > 0 ? top : 0;
+      };
+      // ネイティブの #contact ジャンプは pageshow 前後に不定タイミングで走り、
+      // smooth スクロールと競合して途中で止まることがある。最後に実行された方が勝つため、
+      // smooth を主としつつ、短時間後に目標位置へずれていれば auto で再矯正して確定させる。
+      requestAnimationFrame(() => window.scrollTo({ top: targetY(), behavior: 'smooth' }));
+      [300, 900].forEach((ms) => setTimeout(() => {
+        if (Math.abs(window.scrollY - targetY()) > 8) {
+          window.scrollTo({ top: targetY(), behavior: 'auto' });
+        }
+      }, ms));
+    }
+    return;
+  }
   // メインページ(index)へアクセスした場合は、必ずスクロール位置を初期値(トップ)にする。
   // ロゴ(https://www.ai-ustyle.co.jp/)から遷移してきた場合も、保存済みの位置は復元しない。
   const isTopPage = location.pathname === '/' || location.pathname === '/index.html';
