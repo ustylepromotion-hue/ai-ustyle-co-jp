@@ -92,3 +92,16 @@ python3 scripts/security-csp-check.py http://127.0.0.1:8789
   - 実チャットE2E: 通常質問 → delta 76 + done（料金回答）＝**既存機能は無傷**
   - プロンプトインジェクション（システムプロンプト/キー名出力要求）→ 漏洩マーカー0件（モデルが拒否、出力フィルタの誤爆もなし）
 - 未適用のまま: D1日次上限（migration 0002）、Pages Functions側のレート制限binding、ゾーンWAF設定。
+
+## 7. 日次上限（100通/日）の確定と本番実測（2026-09-17T22:27:56+09:00）
+
+- 仕様: 1IPあたり **30通/日** → 全IP合計 **100通/日** の2段（IP段を先に判定し、IPで止まった要求は全体枠を消費しない）。
+  カウンタは `chat_usage_daily(scope, day, count)` に scope=`global` / `ip:<address>` で JST日付キーでアトミック加算。
+  上書きは `CHAT_DAILY_TOTAL` / `CHAT_IP_DAILY_TOTAL`（0以下でその段を無効化）。テーブル未作成・DB障害はフェイルオープン。
+- migration 0002 は本番D1へ適用済み（`chat_usage_daily` 作成。追加のみ・冪等）。
+- 本番実測（workers.dev / 実データ）:
+  - 実リクエスト2回 → `global`=2、`ip:<自IP>`=2 に増加（カウンタが本番で動いている）
+  - 自IPのカウンタを上限値30にした状態でPOST → **429 daily_limit**、その要求で `global` は 2 のまま（全体枠を消費しない）ことを確認
+  - 検証後、自IPのカウンタは 0 に戻して後始末済み
+- 単体テストは 33/33 PASS（上限ちょうど100は通過 / 101で429 / IP段31で429 / env上書き / 0で無効化 / DB障害でフェイルオープン / IP段で止まった要求がglobal枠を消費しない）
+- 本番デプロイ: Pages `0fb373df`（Production/main）、Worker `f9907d32-db8b-45d4-8524-369e1fd97f3c`（100%）
