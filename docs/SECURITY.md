@@ -122,3 +122,15 @@ python3 scripts/security-csp-check.py http://127.0.0.1:8789
 - 検証済み: 正常時は出力0バイト／URLを偽装した異常時は上記フォーマットで異常一覧を出力（無課金）／`hermes send --to telegram` の疎通OK（chat_id 8831894322）
 - 戻し方: `cronjob` で `pause`（一時停止）または `remove`（削除）。スクリプト単体は `~/.hermes/profiles/normal/scripts/ai-ustyle-watch.sh` を直接実行して手動確認できる
 - しきい値の変更: スクリプト内の `>= 80`（全体枠の注意ライン）/ `>= 30`（IP上限）を書き換える
+
+## 9. 非ブラウザ要求の観測（2026-09-17T22:49:21+09:00 追加・既定は観測のみ）
+
+ゾーン(WAF)が使えない間の上積みとして、ブラウザ以外の素朴なクライアントを可視化する。
+
+- 判定: `sec-fetch-mode`（ブラウザの fetch は必ず付ける）が無く、UA も `Mozilla/5.0` でないリクエストを「非ブラウザ」とみなす（`functions/_security.js browserSignals()`）。
+- 既定は **観測のみ**: `chat_usage_daily` の scope `obs:nonbrowser` を加算し、Workers logs に `[security] non_browser_observed ...` を出す。**ブロックはしない**。
+- 遮断へ切替: `CHAT_REQUIRE_BROWSER_SIGNALS=1`（Worker は `wrangler.toml` の vars、Pages は ダッシュボードの環境変数）を設定すると 403 `forbidden_client` で止める。
+- watchdog は `obs:nonbrowser` が 20件/日 以上で通知する（切替判断の材料）。
+- 実測（2026-09-17 本番）: 素の curl → 200 で生成成功、`obs:nonbrowser` が 1増加。ブラウザ相当ヘッダ（UA + `sec-fetch-*`）→ 増加なし。node の undici は `sec-fetch-*` を自分で付けるため、検証スクリプトは非ブラウザ扱いにならない。
+- **限界（正直に）**: UA を偽装する bot はこの判定を通ってしまう。本格的なボット/大量IP攻撃はゾーン側の Bot Fight Mode / Managed Ruleset / rate limiting rule の領域で、ここは「素朴なスクリプトの可視化」までが役割。
+- 検証: `node scripts/security-api-guard-test.mjs`（36/36 PASS。観測のみで通る/`=1` で403/ブラウザ相当は観測カウンタを増やさない）。
