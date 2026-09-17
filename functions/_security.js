@@ -150,22 +150,36 @@ export async function checkIpRateLimit(env, request, tag = 'chat') {
   }
 }
 
-// D1 による全体日次上限（コストの絶対上限）。テーブル未作成や DB 障害時はフェイルオープン。
-export async function checkDailyBudget(env, dailyLimit, tag = 'chat') {
+// D1 による日次上限のアトミックカウンタ。失敗時はフェイルオープン（可用性優先）。
+// 既定値: global = 全IP合計（コストの絶対上限）/ ip = 1IPあたり（単一の悪質IPが全体枠を食い潰すのを防ぐ）。
+export const DEFAULT_DAILY_TOTAL = 100;
+export const DEFAULT_IP_DAILY_TOTAL = 30;
+
+// env 上書き（CHAT_DAILY_TOTAL / CHAT_IP_DAILY_TOTAL）。0以下でそのチェックを無効化する。
+export function limitFromEnv(env, key, fallback) {
+  const raw = env?.[key];
+  if (raw === undefined || raw === null || raw === '') return fallback;
+  const value = Number(raw);
+  return Number.isFinite(value) ? value : fallback;
+}
+
+// scope 単位（'global' / 'ip:1.2.3.4'）× JST日付 でカウントする。
+export async function bumpDailyCounter(env, scope, limit, tag = 'chat') {
+  if (!(limit > 0)) return { ok: true, skipped: 'disabled', count: 0, scope };
   if (!env?.DB || typeof env.DB.prepare !== 'function') {
-    return { ok: true, skipped: 'db_missing', count: 0 };
+    return { ok: true, skipped: 'db_missing', count: 0, scope };
   }
   try {
     const row = await env.DB.prepare(
-      'INSERT INTO chat_usage_daily (day, count, updated_at) VALUES (?, 1, ?) ON CONFLICT(day) DO UPDATE SET count = count + 1, updated_at = excluded.updated_at RETURNING count'
+      'INSERT INTO chat_usage_daily (scope, day, count, updated_at) VALUES (?, ?, 1, ?) ON CONFLICT(scope, day) DO UPDATE SET count = count + 1, updated_at = excluded.updated_at RETURNING count'
     )
-      .bind(jstDay(), new Date().toISOString())
+      .bind(scope, jstDay(), new Date().toISOString())
       .first();
     const count = Number(row?.count || 0);
-    return { ok: count <= dailyLimit, skipped: null, count };
+    return { ok: count <= limit, skipped: null, count, limit, scope };
   } catch (error) {
-    console.warn(`[security] daily_budget_fail_open tag=${tag} error=${String(error?.message || error)}`);
-    return { ok: true, skipped: 'error', count: 0 };
+    console.warn(`[security] daily_budget_fail_open tag=${tag} scope=${scope} error=${String(error?.message || error)}`);
+    return { ok: true, skipped: 'error', count: 0, scope };
   }
 }
 

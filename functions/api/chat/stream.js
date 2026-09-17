@@ -1,12 +1,16 @@
 import {
   API_SECURITY_HEADERS,
+  DEFAULT_DAILY_TOTAL,
+  DEFAULT_IP_DAILY_TOTAL,
   MAX_BODY_BYTES,
   allowedOrigins,
-  checkDailyBudget,
+  bumpDailyCounter,
   checkIpRateLimit,
+  clientIp,
   containsLeak,
   isJsonContentType,
   isOriginAllowed,
+  limitFromEnv,
   readTextWithLimit,
 } from '../../_security.js';
 
@@ -16,13 +20,6 @@ const MAX_HISTORY_ENTRIES = 8;
 const MAX_HISTORY_CHARS = 8000;
 const MAX_REPLY_CHARS = 12000;
 const PROVIDER_TIMEOUT_MS = 45000;
-// 全IP合計の1日上限の既定値（コストの絶対上限）。env.CHAT_DAILY_TOTAL で上書き可。
-// D1 テーブル未作成/障害時はフェイルオープン（既存挙動を壊さない）。
-const DEFAULT_DAILY_TOTAL = 300;
-const dailyTotalLimit = (env) => {
-  const value = Number(env?.CHAT_DAILY_TOTAL);
-  return Number.isFinite(value) && value > 0 ? value : DEFAULT_DAILY_TOTAL;
-};
 
 const SYSTEM_PROMPT = `あなたは株式会社ユースタイル（U-STYLE）のAI相談アシスタントです。
 日本語で、相談内容をまず受け止めたうえで、わかりやすく簡潔に答えてください。長文にならず、要点だけを短く答えてください。
@@ -226,10 +223,25 @@ export async function onRequestPost({ request, env }) {
     return jsonResponse(500, { error: 'internal_error', message: '一時的に利用できません。' }, request, env);
   }
 
-  // 5) 全IP合計の日次上限（コストの絶対上限）。
-  const budget = await checkDailyBudget(env, dailyTotalLimit(env), 'chat');
-  if (!budget.ok) {
-    console.warn(`[security] daily_budget_exceeded endpoint=/api/chat/stream count=${budget.count}`);
+  // 5) 日次上限（コストの絶対上限）。全IP合計 100通/日 → 1IPあたり 30通/日の2段。どちらもフェイルオープン。
+  const globalBudget = await bumpDailyCounter(
+    env,
+    'global',
+    limitFromEnv(env, 'CHAT_DAILY_TOTAL', DEFAULT_DAILY_TOTAL),
+    'chat',
+  );
+  if (!globalBudget.ok) {
+    console.warn(`[security] daily_budget_exceeded scope=global endpoint=/api/chat/stream count=${globalBudget.count}`);
+    return jsonResponse(429, { error: 'daily_limit', message: 'ただいまご利用が集中しています。少し時間を置いてもう一度お試しください。' }, request, env);
+  }
+  const ipBudget = await bumpDailyCounter(
+    env,
+    `ip:${clientIp(request)}`,
+    limitFromEnv(env, 'CHAT_IP_DAILY_TOTAL', DEFAULT_IP_DAILY_TOTAL),
+    'chat',
+  );
+  if (!ipBudget.ok) {
+    console.warn(`[security] daily_budget_exceeded scope=ip endpoint=/api/chat/stream count=${ipBudget.count}`);
     return jsonResponse(429, { error: 'daily_limit', message: 'ただいまご利用が集中しています。少し時間を置いてもう一度お試しください。' }, request, env);
   }
 

@@ -9,7 +9,7 @@
 | --- | --- |
 | 他サイトのページからチャットAPIを叩かれる（API乱用・課金） | Origin検査（許可外は403でLLMに到達させない） |
 | ボット/スクレイパによる連打（コスト消費） | IP単位レート制限（Workers Rate Limiting binding: 10回/60秒/1IP） |
-| 大量IPからの分散攻撃による費用爆発 | D1による全IP合計の日次上限（既定300回/日。安定運用後にD1マイグレーション適用で有効化） |
+| 大量IPからの分散攻撃による費用爆発 | D1の日次上限（全IP合計 **100通/日** ＋ 1IPあたり **30通/日**。migration 0002 適用で有効化） |
 | 巨大ボディ・巨大入力によるWorker疲弊 | ボディ32KB上限（413）/ メッセージ2,000文字上限（既存） |
 | プロンプトインジェクションによる内部情報奪取 | 出力フィルタ（システムプロンプト見出し・シークレット名・上流URL・モデルIDを検出したら応答を中断） |
 | クリックジャッキング | `X-Frame-Options: DENY` + CSP `frame-ancestors 'none'` |
@@ -41,7 +41,9 @@
 `env.CHAT_ALLOWED_ORIGINS`（カンマ区切り）で追加可。**Originが無いリクエスト（curl等）は既存挙動どおり通す。**
 
 ### 調整ノブ（環境変数）
-- `CHAT_DAILY_TOTAL`（既定 300）… 全IP合計の1日上限
+- `CHAT_DAILY_TOTAL`（既定 100）… 全IP合計の1日上限（0以下で無効化）
+- `CHAT_IP_DAILY_TOTAL`（既定 30）… 1IPあたりの1日上限（0以下で無効化）
+- カウンタは `chat_usage_daily(scope, day)` に scope=`global` / `ip:<address>` で記録（JST日付・アトミック加算）
 - `CHAT_ALLOWED_ORIGINS` … 追加許可オリジン
 
 ## 3. 検証（毎回・デプロイ前後に実行）
@@ -62,7 +64,7 @@ python3 scripts/security-csp-check.py http://127.0.0.1:8789
 
 ## 4. 未適用 / 今後の任意項目
 
-- **D1マイグレーション未適用**: 日次上限テーブルを作るまで日次上限はフェイルオープン（無効）。
+- **D1マイグレーション未適用**: 日次上限テーブルを作るまで日次上限はフェイルオープン（無効）。**未適用の間は日次100通の上限は効かない**。
   適用: `npx wrangler d1 execute ai-ustyle-marunage-chat --remote --file migrations/0002_chat_usage_daily.sql`
 - **Pages Functions側のレート制限binding**: `wrangler.toml` の `[[ratelimits]]` は Worker にのみ効く。
   Pagesプロジェクトにも同名bindingを付けるにはダッシュボード/APIでの設定が必要（未実施でもIP制限はWorker側で効く）。

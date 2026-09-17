@@ -46,19 +46,20 @@ function mockUpstream(chunks = ['こんにちは。', 'ご相談内容を教え�
 }
 
 // ---- D1 モック -----------------------------------------------------------
-function fakeD1({ dailyCount = 1, throwOnDaily = false, throwOnVisitor = false } = {}) {
+function fakeD1({ globalCount = 1, ipCount = 1, throwOnDaily = false, throwOnVisitor = false } = {}) {
   return {
     prepare(sql) {
       const statement = {
-        bind: (...args) => statement,
-        args: [],
+        _args: [],
+        bind(...args) { statement._args = args; return statement; },
         async first() {
           if (sql.includes('chat_usage_daily')) {
             if (throwOnDaily) throw new Error('no such table: chat_usage_daily');
-            return { count: dailyCount };
+            const scope = String(statement._args[0] ?? '');
+            return { count: scope.startsWith('ip:') ? ipCount : globalCount };
           }
           if (sql.includes('FROM visitors')) return { id: 'vis_test', daily_count: 0, daily_date: '2026-09-17', last_summary: null };
-          if (sql.includes('RETURNING')) return { count: dailyCount };
+          if (sql.includes('RETURNING')) return { count: globalCount };
           return null;
         },
         async run() {
@@ -180,12 +181,44 @@ await check('レート制限bindingの例外時はフェイルオープン（200
   await res.text();
 });
 
-await check('全IP日次上限の超過は429 daily_limit', async () => {
+await check('全IP合計の日次上限（既定100通/日）の超過は429 daily_limit', async () => {
   mockUpstream();
-  const env = baseEnv({ DB: fakeD1({ dailyCount: 301 }), CHAT_DAILY_TOTAL: '300' });
+  const env = baseEnv({ DB: fakeD1({ globalCount: 101 }) });
   const res = await mainChatPost({ request: jsonRequest({ message: 'テスト' }), env });
   assert.equal(res.status, 429);
   assert.equal((await res.json()).error, 'daily_limit');
+});
+
+await check('上限ちょうど（100通目）は通る', async () => {
+  mockUpstream();
+  const env = baseEnv({ DB: fakeD1({ globalCount: 100, ipCount: 30 }) });
+  const res = await mainChatPost({ request: jsonRequest({ message: 'テスト' }), env });
+  assert.equal(res.status, 200);
+  await res.text();
+});
+
+await check('1IPあたりの日次上限（既定30通/日）の超過は429 daily_limit', async () => {
+  mockUpstream();
+  const env = baseEnv({ DB: fakeD1({ globalCount: 5, ipCount: 31 }) });
+  const res = await mainChatPost({ request: jsonRequest({ message: 'テスト' }), env });
+  assert.equal(res.status, 429);
+  assert.equal((await res.json()).error, 'daily_limit');
+});
+
+await check('env.CHAT_DAILY_TOTAL / CHAT_IP_DAILY_TOTAL で上限を変えられる', async () => {
+  mockUpstream();
+  const env = baseEnv({ DB: fakeD1({ globalCount: 101, ipCount: 31 }), CHAT_DAILY_TOTAL: '200', CHAT_IP_DAILY_TOTAL: '50' });
+  const res = await mainChatPost({ request: jsonRequest({ message: 'テスト' }), env });
+  assert.equal(res.status, 200);
+  await res.text();
+});
+
+await check('0を指定するとその段の日次上限は無効化される', async () => {
+  mockUpstream();
+  const env = baseEnv({ DB: fakeD1({ globalCount: 9999, ipCount: 9999 }), CHAT_DAILY_TOTAL: '0', CHAT_IP_DAILY_TOTAL: '0' });
+  const res = await mainChatPost({ request: jsonRequest({ message: 'テスト' }), env });
+  assert.equal(res.status, 200);
+  await res.text();
 });
 
 await check('D1障害時はフェイルオープン（200）', async () => {
