@@ -121,15 +121,15 @@ export async function onRequestPost({ request, env }) {
   if (!text) return jsonError(400, { error: 'empty_message' });
   if (text.length > 4000) return jsonError(400, { error: 'too_long' });
 
-  // 5) 日次上限（全IP合計 100通/日 → 1IPあたり 30通/日の2段）。
-  const globalBudget = await bumpDailyCounter(env, 'global', limitFromEnv(env, 'CHAT_DAILY_TOTAL', DEFAULT_DAILY_TOTAL), 'testai');
-  if (!globalBudget.ok) {
-    console.warn(`[security] daily_budget_exceeded scope=global endpoint=/test/ai/api/chat/stream count=${globalBudget.count}`);
-    return jsonError(429, { error: 'daily_limit', message: 'ただいまご利用が集中しています。少し時間を置いてもう一度お試しください。' });
-  }
+  // 5) 日次上限（1IPあたり30通/日 → 全IP合計100通/日 の順。IPで止まった要求に全体枠を消費させない）。
   const ipBudget = await bumpDailyCounter(env, `ip:${clientIp(request)}`, limitFromEnv(env, 'CHAT_IP_DAILY_TOTAL', DEFAULT_IP_DAILY_TOTAL), 'testai');
   if (!ipBudget.ok) {
     console.warn(`[security] daily_budget_exceeded scope=ip endpoint=/test/ai/api/chat/stream count=${ipBudget.count}`);
+    return jsonError(429, { error: 'daily_limit', message: 'ただいまご利用が集中しています。少し時間を置いてもう一度お試しください。' });
+  }
+  const globalBudget = await bumpDailyCounter(env, 'global', limitFromEnv(env, 'CHAT_DAILY_TOTAL', DEFAULT_DAILY_TOTAL), 'testai');
+  if (!globalBudget.ok) {
+    console.warn(`[security] daily_budget_exceeded scope=global endpoint=/test/ai/api/chat/stream count=${globalBudget.count}`);
     return jsonError(429, { error: 'daily_limit', message: 'ただいまご利用が集中しています。少し時間を置いてもう一度お試しください。' });
   }
 

@@ -223,17 +223,8 @@ export async function onRequestPost({ request, env }) {
     return jsonResponse(500, { error: 'internal_error', message: '一時的に利用できません。' }, request, env);
   }
 
-  // 5) 日次上限（コストの絶対上限）。全IP合計 100通/日 → 1IPあたり 30通/日の2段。どちらもフェイルオープン。
-  const globalBudget = await bumpDailyCounter(
-    env,
-    'global',
-    limitFromEnv(env, 'CHAT_DAILY_TOTAL', DEFAULT_DAILY_TOTAL),
-    'chat',
-  );
-  if (!globalBudget.ok) {
-    console.warn(`[security] daily_budget_exceeded scope=global endpoint=/api/chat/stream count=${globalBudget.count}`);
-    return jsonResponse(429, { error: 'daily_limit', message: 'ただいまご利用が集中しています。少し時間を置いてもう一度お試しください。' }, request, env);
-  }
+  // 5) 日次上限（コストの絶対上限）。1IPあたり30通/日 → 全IP合計100通/日の順に見る。
+  //    IP段を先に判定するのは、IPで止まった要求に全体枠を消費させないため（単一IPによる全体枠の枯渇を防ぐ）。
   const ipBudget = await bumpDailyCounter(
     env,
     `ip:${clientIp(request)}`,
@@ -242,6 +233,16 @@ export async function onRequestPost({ request, env }) {
   );
   if (!ipBudget.ok) {
     console.warn(`[security] daily_budget_exceeded scope=ip endpoint=/api/chat/stream count=${ipBudget.count}`);
+    return jsonResponse(429, { error: 'daily_limit', message: 'ただいまご利用が集中しています。少し時間を置いてもう一度お試しください。' }, request, env);
+  }
+  const globalBudget = await bumpDailyCounter(
+    env,
+    'global',
+    limitFromEnv(env, 'CHAT_DAILY_TOTAL', DEFAULT_DAILY_TOTAL),
+    'chat',
+  );
+  if (!globalBudget.ok) {
+    console.warn(`[security] daily_budget_exceeded scope=global endpoint=/api/chat/stream count=${globalBudget.count}`);
     return jsonResponse(429, { error: 'daily_limit', message: 'ただいまご利用が集中しています。少し時間を置いてもう一度お試しください。' }, request, env);
   }
 

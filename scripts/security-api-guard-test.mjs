@@ -47,7 +47,9 @@ function mockUpstream(chunks = ['こんにちは。', 'ご相談内容を教え�
 
 // ---- D1 モック -----------------------------------------------------------
 function fakeD1({ globalCount = 1, ipCount = 1, throwOnDaily = false, throwOnVisitor = false } = {}) {
+  const calls = [];
   return {
+    calls,
     prepare(sql) {
       const statement = {
         _args: [],
@@ -56,6 +58,7 @@ function fakeD1({ globalCount = 1, ipCount = 1, throwOnDaily = false, throwOnVis
           if (sql.includes('chat_usage_daily')) {
             if (throwOnDaily) throw new Error('no such table: chat_usage_daily');
             const scope = String(statement._args[0] ?? '');
+            calls.push(scope);
             return { count: scope.startsWith('ip:') ? ipCount : globalCount };
           }
           if (sql.includes('FROM visitors')) return { id: 'vis_test', daily_count: 0, daily_date: '2026-09-17', last_summary: null };
@@ -199,10 +202,13 @@ await check('上限ちょうど（100通目）は通る', async () => {
 
 await check('1IPあたりの日次上限（既定30通/日）の超過は429 daily_limit', async () => {
   mockUpstream();
-  const env = baseEnv({ DB: fakeD1({ globalCount: 5, ipCount: 31 }) });
+  const db = fakeD1({ globalCount: 5, ipCount: 31 });
+  const env = baseEnv({ DB: db });
   const res = await mainChatPost({ request: jsonRequest({ message: 'テスト' }), env });
   assert.equal(res.status, 429);
   assert.equal((await res.json()).error, 'daily_limit');
+  // IP段で止まった要求は全体枠（global）を消費しない
+  assert.deepEqual(db.calls, ['ip:unknown'], `global枠を消費している: ${JSON.stringify(db.calls)}`);
 });
 
 await check('env.CHAT_DAILY_TOTAL / CHAT_IP_DAILY_TOTAL で上限を変えられる', async () => {
