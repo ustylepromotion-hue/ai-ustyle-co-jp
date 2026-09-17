@@ -105,3 +105,20 @@ python3 scripts/security-csp-check.py http://127.0.0.1:8789
   - 検証後、自IPのカウンタは 0 に戻して後始末済み
 - 単体テストは 33/33 PASS（上限ちょうど100は通過 / 101で429 / IP段31で429 / env上書き / 0で無効化 / DB障害でフェイルオープン / IP段で止まった要求がglobal枠を消費しない）
 - 本番デプロイ: Pages `0fb373df`（Production/main）、Worker `f9907d32-db8b-45d4-8524-369e1fd97f3c`（100%）
+
+## 8. 監視・通知（watchdog / 2026-09-17T22:36:15+09:00 追加）
+
+既存の ワルプルBOT 監視と同レベル・同形式で、ai-ustyle.co.jp 用の毎日watchdogを追加した。
+
+- 実体: `~/.hermes/profiles/normal/scripts/ai-ustyle-watch.sh`（Hermesプロファイル側。既存の walpurgisnacht-watch.sh と同じ置き場）
+- ジョブ: Hermes cron `ai-ustyle-security-watch`（job_id `e3dbc697699c`） / `0 9 * * *`（毎日09:00 JST） / `no_agent: true` / `deliver: telegram`
+- 挙動: **正常時は空出力＝通知なし**。異常時のみTelegramへ本文が届く（stdoutがそのまま配信される）
+- 検査内容（無課金）:
+  1. 主要パス死活（www / /pricing / /company / /usecase-ebay.html / /test/ai/ / /transportation/ / apex / Worker /healthz）
+  2. チャットAPIの防壁（GET=405 / 許可外Origin=403 / text-plain=415 / 巨大ボディ=413）
+  3. セキュリティヘッダー（CSP有無・**カンマ連結= _headers破損**の検知・`/test/ai/` だけ緩和版が効いているか・HSTS・XFO・nosniff）
+  4. 日次上限カウンタ（D1読み取りのみ。全体枠80%到達 / 単一IPが30到達＝攻撃の疑い を通知）
+  5. 疎通カナリア: **1日1回だけ実生成を1往復**（失敗時は20秒後に1回再試行）。上流APIキー切れ・DeepSeek障害・日次上限到達を検知する。日次上限100通のうち1通を消費
+- 検証済み: 正常時は出力0バイト／URLを偽装した異常時は上記フォーマットで異常一覧を出力（無課金）／`hermes send --to telegram` の疎通OK（chat_id 8831894322）
+- 戻し方: `cronjob` で `pause`（一時停止）または `remove`（削除）。スクリプト単体は `~/.hermes/profiles/normal/scripts/ai-ustyle-watch.sh` を直接実行して手動確認できる
+- しきい値の変更: スクリプト内の `>= 80`（全体枠の注意ライン）/ `>= 30`（IP上限）を書き換える
