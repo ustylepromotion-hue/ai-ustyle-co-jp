@@ -4,7 +4,9 @@ import {
   DEFAULT_IP_DAILY_TOTAL,
   MAX_BODY_BYTES,
   allowedOrigins,
+  browserSignals,
   bumpDailyCounter,
+  bumpObservationCounter,
   checkIpRateLimit,
   clientIp,
   containsLeak,
@@ -12,6 +14,7 @@ import {
   isOriginAllowed,
   limitFromEnv,
   readTextWithLimit,
+  requireBrowserSignals,
 } from '../../_security.js';
 
 const encoder = new TextEncoder();
@@ -189,6 +192,16 @@ export async function onRequestPost({ request, env }) {
   // 2) Content-Type 検査（JSON 以外の単純リクエストを弾く）。
   if (!isJsonContentType(request)) {
     return jsonResponse(415, { error: 'unsupported_media_type', message: '入力形式を確認してください。' }, request, env);
+  }
+  // 2.5) 非ブラウザらしさの観測（既定は観測のみ。CHAT_REQUIRE_BROWSER_SIGNALS=1 で遮断）。
+  const signals = browserSignals(request);
+  if (!signals.browserish) {
+    if (requireBrowserSignals(env)) {
+      console.warn('[security] non_browser_blocked endpoint=/api/chat/stream');
+      return jsonResponse(403, { error: 'forbidden_client', message: 'このページからは送信できません。' }, request, env);
+    }
+    console.warn(`[security] non_browser_observed endpoint=/api/chat/stream sec_fetch_mode=${signals.mode || '-'} origin=${signals.origin ? 'yes' : 'no'} ua=${signals.user_agent_present ? 'yes' : 'no'}`);
+    await bumpObservationCounter(env, 'obs:nonbrowser', 'chat');
   }
   // 3) IP 単位のレート制限（binding 未設定・障害時はフェイルオープン）。
   const rate = await checkIpRateLimit(env, request, 'chat');

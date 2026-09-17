@@ -81,10 +81,16 @@ function fakeD1({ globalCount = 1, ipCount = 1, throwOnDaily = false, throwOnVis
   };
 }
 
-function jsonRequest(body, { origin = ORIGIN_OK, contentType = 'application/json', url = 'https://www.ai-ustyle.co.jp/api/chat/stream' } = {}) {
+function jsonRequest(body, { origin = ORIGIN_OK, contentType = 'application/json', url = 'https://www.ai-ustyle.co.jp/api/chat/stream', browser = true } = {}) {
   const headers = {};
   if (origin) headers.origin = origin;
   if (contentType) headers['content-type'] = contentType;
+  if (browser) {
+    // 実ブラウザ相当（fetch POST は Sec-Fetch-* と UA を付ける）
+    headers['user-agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0 Safari/537.36';
+    headers['sec-fetch-mode'] = 'cors';
+    headers['sec-fetch-site'] = origin === ORIGIN_NG ? 'cross-site' : 'same-site';
+  }
   return new Request(url, { method: 'POST', headers, body: typeof body === 'string' ? body : JSON.stringify(body) });
 }
 
@@ -313,6 +319,31 @@ await check('不正なhistoryは無害化される（role/content検査）', asy
   assert.ok(sent.messages.every((m) => typeof m.content === 'string'));
   assert.doesNotMatch(JSON.stringify(sent.messages), /ignore previous instructions/);
   assert.equal(sent.messages.at(-1).content, 'こんにちは');
+});
+
+await check('非ブラウザ相当（Sec-Fetchなし・UAなし）は既定では観測のみで通る', async () => {
+  mockUpstream();
+  const db = fakeD1();
+  const res = await mainChatPost({ request: jsonRequest({ message: 'テスト' }, { browser: false }), env: baseEnv({ DB: db }) });
+  assert.equal(res.status, 200);
+  await res.text();
+  assert.ok(db.calls.includes('obs:nonbrowser'), `観測カウンタが増えていない: ${JSON.stringify(db.calls)}`);
+});
+
+await check('CHAT_REQUIRE_BROWSER_SIGNALS=1 なら非ブラウザは403で遮断（上流到達なし）', async () => {
+  const calls = mockUpstream();
+  const res = await mainChatPost({ request: jsonRequest({ message: 'テスト' }, { browser: false }), env: baseEnv({ CHAT_REQUIRE_BROWSER_SIGNALS: '1' }) });
+  assert.equal(res.status, 403);
+  assert.equal((await res.json()).error, 'forbidden_client');
+  assert.equal(calls.length, 0);
+});
+
+await check('ブラウザ相当の要求は観測カウンタを増やさない', async () => {
+  mockUpstream();
+  const db = fakeD1();
+  const res = await mainChatPost({ request: jsonRequest({ message: 'テスト' }), env: baseEnv({ DB: db }) });
+  await res.text();
+  assert.ok(!db.calls.includes('obs:nonbrowser'), `観測カウンタが増えている: ${JSON.stringify(db.calls)}`);
 });
 
 await check('OPTIONSは許可OriginにだけACAOを返す', async () => {

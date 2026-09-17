@@ -183,6 +183,33 @@ export async function bumpDailyCounter(env, scope, limit, tag = 'chat') {
   }
 }
 
+// ブラウザの fetch POST は Sec-Fetch-* を必ず付ける。curl 等のスクリプトは付けない。
+// 既定は「観測のみ」（D1 に obs:nonbrowser としてカウントしログに残す）。
+// env.CHAT_REQUIRE_BROWSER_SIGNALS=1 で 403 遮断に切替できる（誤爆リスクを実データで見てから）。
+export function browserSignals(request) {
+  const header = (name) => request?.headers?.get(name) || '';
+  const mode = header('sec-fetch-mode');
+  const site = header('sec-fetch-site');
+  const userAgent = header('user-agent');
+  return {
+    mode,
+    site,
+    origin: header('origin'),
+    user_agent_present: Boolean(userAgent),
+    browserish: Boolean(mode) || /Mozilla\/5\.0/.test(userAgent),
+  };
+}
+
+export function requireBrowserSignals(env) {
+  const value = String(env?.CHAT_REQUIRE_BROWSER_SIGNALS || '').trim().toLowerCase();
+  return value === '1' || value === 'true';
+}
+
+// 観測用カウンタ（上限なし＝ブロックしない）。scope='obs:nonbrowser' などに使う。
+export async function bumpObservationCounter(env, scope, tag = 'chat') {
+  return bumpDailyCounter(env, scope, Number.MAX_SAFE_INTEGER, tag);
+}
+
 export function securityHeaders(extra = {}, base = API_SECURITY_HEADERS) {
   return { ...base, ...extra };
 }
