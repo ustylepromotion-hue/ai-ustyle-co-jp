@@ -1,8 +1,43 @@
-# ゾーン側セキュリティ設定チェックリスト（人間がダッシュボードで実施）
+# ゾーン側セキュリティ設定チェックリスト
 
-対象: Cloudflare アカウントのゾーン **ai-ustyle.co.jp**（apex/www を配信）。
+対象: Cloudflare ゾーン **ai-ustyle.co.jp**（zone_id `026dcc206d9b1ae4b46ed8ba045276c3` / プラン **Free Website**）
 コード側（`public/_headers` / `functions/_security.js` / Worker `[[ratelimits]]`）で届かない範囲をここで塞ぐ。
-所要 10〜15分。各項目は独立してON/OFFできるので、問題があれば1つずつ戻せる。
+
+## 0. どちらで進めるか
+
+- **A. スコープ限定のAPIトークンを1本作り、Hermesに全部やらせる（推奨・所要2分）**
+  下の手順で作った値を `~/.config/secrets/cloudflare-zone.env` に1行置くだけ。以降は API で読み取り→適用→実測まで自動で回せる。
+- **B. 自分でダッシュボードを触る（所要10〜15分）** → §1〜§5 のとおり。
+
+確認済みの事実: wrangler の OAuth トークンは `zone:read` までで、**ゾーン設定/WAF/Bot/DNSSEC は読み書きとも `10000 Authentication error` / `9109 Unauthorized`**（2026-09-17 実測）。だから A では専用トークンが必要。
+
+### A: トークン作成手順（値は会話に出さない）
+1. https://dash.cloudflare.com/profile/api-tokens → **Create Token** → **Create Custom Token**
+2. Permissions を次の5行（Zone Resources はすべて `Include → Specific zone → ai-ustyle.co.jp`）
+   - Zone → **Zone Settings** → Edit
+   - Zone → **Zone WAF** → Edit （Managed Ruleset と rate limiting rules に必要）
+   - Zone → **Bot Management** → Edit （Bot Fight Mode に必要）
+   - Zone → **DNS** → Edit （DNSSEC に必要）
+   - Zone → **Zone** → Read
+3. Continue to summary → Create Token → 表示された値をコピー（再表示不可）
+4. ターミナル（`<貼り付け>` を置換。値はエコーされない）:
+   `mkdir -p ~/.config/secrets && printf 'CLOUDFLARE_ZONE_TOKEN=%s\n' '<貼り付け>' > ~/.config/secrets/cloudflare-zone.env && chmod 600 ~/.config/secrets/cloudflare-zone.env`
+5. Hermesに「ゾーン設定を適用して」と伝える → 下記の推奨値を適用し、実測結果まで報告する
+
+### A で適用する推奨値
+| 項目 | 値 |
+| --- | --- |
+| Always Use HTTPS | ON |
+| Minimum TLS Version | TLS 1.2 |
+| Automatic HTTPS Rewrites / Opportunistic Encryption / TLS 1.3 | ON |
+| HSTS | Enable / `max-age=31536000` / **includeSubDomains は当面OFF** / preload OFF / nosniff ON |
+| Security Level / Browser Integrity Check | Medium / ON |
+| Bot Fight Mode | ON |
+| Cloudflare Managed Ruleset | 有効（既定アクション Managed Challenge） |
+| Rate limiting rule | `chat-api-flood` / `http.request.uri.path eq "/api/chat/stream"` / 5 requests per 10 seconds / per IP / Block（mitigation 10s）※Freeは1本・10秒のみ |
+| DNSSEC | 有効化（レジストラ側のDS登録が別途必要。指示があればDSレコードを出す） |
+
+> HSTS の `includeSubDomains` は「配下の全サブドメインがHTTPSで応答できる」ことを確認してから。誤るとHTTPのみのサブドメインが到達不能になる。
 
 ## 1. SSL/TLS → Edge Certificates
 
