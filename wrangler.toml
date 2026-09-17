@@ -16,3 +16,13 @@ database_id = "4474aece-1535-4a1e-8bc5-754863f07ec4"
 
 [observability]
 enabled = true
+
+# チャットAPIのIP単位レート制限（WAFの rate limiting rules と同じ基盤・ロケーションローカル）。
+# 10リクエスト / 60秒 / 1IP。binding が無い環境ではコード側がフェイルオープンする。
+[[ratelimits]]
+name = "CHAT_RATE_LIMIT"
+namespace_id = "1001"
+
+  [ratelimits.simple]
+  limit = 10
+  period = 60

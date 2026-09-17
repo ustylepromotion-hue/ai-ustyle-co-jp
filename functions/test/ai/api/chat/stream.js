@@ -9,9 +9,27 @@
 
 import { ensureVisitor, consumeQuota, loadRecentMessages, saveTurn, buildResumeLine, buildSystemPrompt, now } from './_shared.js';
 import { PERSONA_MD } from './_persona.js';
+import {
+  API_SECURITY_HEADERS,
+  MAX_BODY_BYTES,
+  checkDailyBudget,
+  checkIpRateLimit,
+  containsLeak,
+  isJsonContentType,
+  isOriginAllowed,
+  readTextWithLimit,
+} from '../../../../_security.js';
 
 const encoder = new TextEncoder();
 const sse = (event, data) => encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+
+// JSON エラー応答にもセキュリティヘッダーを付ける（テキスト/HTMLとして解釈されないようにする）。
+function jsonError(status, payload, extraHeaders = {}) {
+  return new Response(JSON.stringify(payload), {
+    status,
+    headers: { ...API_SECURITY_HEADERS, 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...extraHeaders },
+  });
+}
 
 async function callDeepSeekStream(env, messages, onDelta, { maxTokens = 1200, temperature = 0.6 } = {}) {
   const key = env.TEST_MENDOOU;
@@ -30,28 +48,35 @@ async function callDeepSeekStream(env, messages, onDelta, { maxTokens = 1200, te
   const decoder = new TextDecoder();
   let buf = '';
   let full = '';
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buf += decoder.decode(value, { stream: true });
-    const parts = buf.split('\n\n');
-    buf = parts.pop() || '';
-    for (const part of parts) {
-      for (const line of part.split('\n')) {
-        const trimmed = line.trim();
-        if (!trimmed.startsWith('data:')) continue;
-        const raw = trimmed.slice(5).trim();
-        if (raw === '[DONE]') continue;
-        let chunk;
-        try { chunk = JSON.parse(raw); } catch { continue; }
-        const delta = chunk?.choices?.[0]?.delta?.content || '';
-        if (delta) {
-          full += delta;
-          await onDelta(delta);
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      const parts = buf.split('\n\n');
+      buf = parts.pop() || '';
+      for (const part of parts) {
+        for (const line of part.split('\n')) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith('data:')) continue;
+          const raw = trimmed.slice(5).trim();
+          if (raw === '[DONE]') continue;
+          let chunk;
+          try { chunk = JSON.parse(raw); } catch { continue; }
+          const delta = chunk?.choices?.[0]?.delta?.content || '';
+          if (delta) {
+            full += delta;
+            // 内部プロンプト・シークレット・上流エンドポイントの漏洩はここで遮断する。
+            if (containsLeak(full)) throw new Error('leak_blocked');
+            await onDelta(delta);
+          }
         }
       }
     }
+  } finally {
+    try { await reader.cancel(); } catch { /* noop */ }
   }
+  if (containsLeak(full)) throw new Error('leak_blocked');
   return { full };
 }
 
@@ -64,23 +89,59 @@ function corsHeaders(env, request) {
 }
 
 export async function onRequestPost({ request, env }) {
-  let body;
-  try { body = await request.json(); } catch { return new Response(JSON.stringify({ error: 'invalid_json' }), { status: 400 }); }
-  const text = String(body?.message || '').trim();
-  if (!text) return new Response(JSON.stringify({ error: 'empty_message' }), { status: 400 });
-  if (text.length > 4000) return new Response(JSON.stringify({ error: 'too_long' }), { status: 400 });
+  // 1) クロスサイト POST を弾く（同一オリジン / 許可オリジン / Origin 無しは既存どおり通す）。
+  if (!isOriginAllowed(request, env)) {
+    console.warn('[security] origin_rejected endpoint=/test/ai/api/chat/stream');
+    return jsonError(403, { error: 'forbidden_origin', message: 'このページからは送信できません。' });
+  }
+  // 2) JSON 以外の単純リクエストを弾く。
+  if (!isJsonContentType(request)) {
+    return jsonError(415, { error: 'unsupported_media_type', message: '入力形式を確認してください。' });
+  }
+  // 3) IP 単位のレート制限（binding 未設定・障害時はフェイルオープン）。
+  const rate = await checkIpRateLimit(env, request, 'testai');
+  if (!rate.ok) {
+    console.warn('[security] ip_rate_limited endpoint=/test/ai/api/chat/stream');
+    return jsonError(429, { error: 'rate_limited', message: 'ただいまご利用が集中しています。少し時間を置いてもう一度お試しください。' });
+  }
+  // 4) ボディは上限バイトまで読む。
+  const raw = await readTextWithLimit(request, MAX_BODY_BYTES);
+  if (raw === null) {
+    console.warn('[security] body_too_large endpoint=/test/ai/api/chat/stream');
+    return jsonError(413, { error: 'too_large', message: '送信内容が大きすぎます。' });
+  }
 
-  const visitor = await ensureVisitor(env, request);
+  let body;
+  try { body = JSON.parse(raw || ''); } catch { return jsonError(400, { error: 'invalid_json' }); }
+  const text = String(body?.message || '').trim();
+  if (!text) return jsonError(400, { error: 'empty_message' });
+  if (text.length > 4000) return jsonError(400, { error: 'too_long' });
+
+  // 5) 全IP合計の日次上限（コストの絶対上限）。
+  const budget = await checkDailyBudget(env, Number(env.CHAT_DAILY_TOTAL || 300), 'testai');
+  if (!budget.ok) {
+    console.warn(`[security] daily_budget_exceeded endpoint=/test/ai/api/chat/stream count=${budget.count}`);
+    return jsonError(429, { error: 'daily_limit', message: 'ただいまご利用が集中しています。少し時間を置いてもう一度お試しください。' });
+  }
+
+  let visitor;
+  try {
+    visitor = await ensureVisitor(env, request);
+  } catch (error) {
+    console.error(`[security] visitor_store_failed endpoint=/test/ai/api/chat/stream error=${String(error?.message || error)}`);
+    return jsonError(503, { error: 'unavailable', message: '一時的に利用できません。少し時間を置いてもう一度お試しください。' });
+  }
   const dailyLimit = Number(env.DAILY_FREE_LIMIT || 20);
   const ok = await consumeQuota(env, visitor.visitorId, dailyLimit);
   if (!ok) {
-    return new Response(JSON.stringify({ error: 'quota_exceeded', message: '本日ご利用いただける回数の上限に達しました。日付が変わると自動で回復します。LINEからはこのままご相談いただけます。' }), { status: 429 });
+    return jsonError(429, { error: 'quota_exceeded', message: '本日ご利用いただける回数の上限に達しました。日付が変わると自動で回復します。LINEからはこのままご相談いただけます。' });
   }
 
   const history = await loadRecentMessages(env, visitor.visitorId, 12);
   const isNewSession = history.length === 0;
 
   const headers = {
+    ...API_SECURITY_HEADERS,
     'content-type': 'text/event-stream; charset=utf-8',
     'cache-control': 'no-store',
     'x-accel-buffering': 'no',
@@ -115,5 +176,8 @@ export async function onRequestPost({ request, env }) {
 }
 
 export async function onRequestOptions({ request, env }) {
-  return new Response(null, { status: 204, headers: { ...corsHeaders(env, request), 'access-control-allow-methods': 'POST, OPTIONS', 'access-control-allow-headers': 'content-type' } });
+  return new Response(null, {
+    status: 204,
+    headers: { ...API_SECURITY_HEADERS, 'cache-control': 'no-store', ...corsHeaders(env, request), 'access-control-allow-methods': 'POST, OPTIONS', 'access-control-allow-headers': 'content-type' },
+  });
 }

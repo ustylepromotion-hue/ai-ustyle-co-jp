@@ -1,13 +1,28 @@
+import {
+  API_SECURITY_HEADERS,
+  MAX_BODY_BYTES,
+  allowedOrigins,
+  checkDailyBudget,
+  checkIpRateLimit,
+  containsLeak,
+  isJsonContentType,
+  isOriginAllowed,
+  readTextWithLimit,
+} from '../../_security.js';
+
 const encoder = new TextEncoder();
 const MAX_MESSAGE_CHARS = 2000;
 const MAX_HISTORY_ENTRIES = 8;
 const MAX_HISTORY_CHARS = 8000;
 const MAX_REPLY_CHARS = 12000;
 const PROVIDER_TIMEOUT_MS = 45000;
-const ALLOWED_ORIGINS = new Set([
-  'https://www.ai-ustyle.co.jp',
-  'https://ai-ustyle.co.jp',
-]);
+// 全IP合計の1日上限の既定値（コストの絶対上限）。env.CHAT_DAILY_TOTAL で上書き可。
+// D1 テーブル未作成/障害時はフェイルオープン（既存挙動を壊さない）。
+const DEFAULT_DAILY_TOTAL = 300;
+const dailyTotalLimit = (env) => {
+  const value = Number(env?.CHAT_DAILY_TOTAL);
+  return Number.isFinite(value) && value > 0 ? value : DEFAULT_DAILY_TOTAL;
+};
 
 const SYSTEM_PROMPT = `あなたは株式会社ユースタイル（U-STYLE）のAI相談アシスタントです。
 日本語で、相談内容をまず受け止めたうえで、わかりやすく簡潔に答えてください。長文にならず、要点だけを短く答えてください。
@@ -42,23 +57,24 @@ const SYSTEM_PROMPT = `あなたは株式会社ユースタイル（U-STYLE）�
 
 const sse = (event, data) => encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
 
-function responseHeaders(request, headers) {
-  const result = new Headers(headers);
+function responseHeaders(request, headers, env) {
+  const result = new Headers(API_SECURITY_HEADERS);
+  for (const [name, value] of Object.entries(headers || {})) result.set(name, value);
   const origin = request?.headers?.get('origin');
-  if (ALLOWED_ORIGINS.has(origin)) {
+  if (origin && allowedOrigins(env).has(origin)) {
     result.set('access-control-allow-origin', origin);
     result.set('vary', 'Origin');
   }
   return result;
 }
 
-function jsonResponse(status, payload, request) {
+function jsonResponse(status, payload, request, env) {
   return new Response(JSON.stringify(payload), {
     status,
     headers: responseHeaders(request, {
       'content-type': 'application/json; charset=utf-8',
       'cache-control': 'no-store',
-    }),
+    }, env),
   });
 }
 
@@ -82,6 +98,7 @@ function normalizeHistory(value, currentMessage) {
 function errorMessage(code) {
   if (code === 'provider_timeout') return '応答に時間がかかっています。少し時間を置いてもう一度お試しください。';
   if (code === 'empty_reply' || code === 'upstream_protocol') return '応答を受け取れませんでした。少し時間を置いてもう一度お試しください。';
+  if (code === 'leak_blocked' || code === 'reply_too_long') return 'うまく回答できませんでした。別の言い方でもう一度お試しください。';
   return 'うまく送信できませんでした。少し時間を置いてもう一度お試しください。';
 }
 
@@ -138,6 +155,8 @@ async function streamProvider(env, messages, onDelta, signal) {
     parseProviderBlock(block, (delta) => {
       if (reply.length + delta.length > MAX_REPLY_CHARS) throw new Error('reply_too_long');
       reply += delta;
+      // 累積文字列で判定する（マーカーがチャンク境界で分割されても検出できる）。
+      if (containsLeak(reply)) throw new Error('leak_blocked');
       onDelta(delta);
     });
   };
@@ -155,32 +174,63 @@ async function streamProvider(env, messages, onDelta, signal) {
     if (buffer.trim()) consume(buffer);
   } catch (error) {
     if (signal.aborted) throw new Error('provider_aborted');
-    if (error?.message === 'upstream_protocol' || error?.message === 'reply_too_long') throw error;
+    if (error?.message === 'upstream_protocol' || error?.message === 'reply_too_long' || error?.message === 'leak_blocked') throw error;
     throw new Error('provider_network');
   } finally {
     try { await reader.cancel(); } catch { /* noop */ }
   }
+  if (containsLeak(reply)) throw new Error('leak_blocked');
   return reply.trim();
 }
 
 export async function onRequestPost({ request, env }) {
+  // 1) クロスオリジン遮断: 許可外オリジンからの POST は LLM に到達させない。
+  if (!isOriginAllowed(request, env)) {
+    console.warn('[security] origin_rejected endpoint=/api/chat/stream');
+    return jsonResponse(403, { error: 'forbidden_origin', message: 'このページからは送信できません。' }, request, env);
+  }
+  // 2) Content-Type 検査（JSON 以外の単純リクエストを弾く）。
+  if (!isJsonContentType(request)) {
+    return jsonResponse(415, { error: 'unsupported_media_type', message: '入力形式を確認してください。' }, request, env);
+  }
+  // 3) IP 単位のレート制限（binding 未設定・障害時はフェイルオープン）。
+  const rate = await checkIpRateLimit(env, request, 'chat');
+  if (!rate.ok) {
+    console.warn('[security] ip_rate_limited endpoint=/api/chat/stream');
+    return jsonResponse(429, { error: 'rate_limited', message: 'ただいまご利用が集中しています。少し時間を置いてもう一度お試しください。' }, request, env);
+  }
+
+  // 4) ボディは上限バイトまで読む（巨大ボディで Worker を疲弊させない）。
+  const raw = await readTextWithLimit(request, MAX_BODY_BYTES);
+  if (raw === null) {
+    console.warn('[security] body_too_large endpoint=/api/chat/stream');
+    return jsonResponse(413, { error: 'too_large', message: '送信内容が大きすぎます。' }, request, env);
+  }
+
   let body;
   try {
-    body = await request.json();
+    body = JSON.parse(raw || '');
   } catch {
-    return jsonResponse(400, { error: 'invalid_json', message: '入力形式を確認してください。' }, request);
+    return jsonResponse(400, { error: 'invalid_json', message: '入力形式を確認してください。' }, request, env);
   }
 
   if (typeof body?.message !== 'string') {
-    return jsonResponse(400, { error: 'empty_message', message: 'メッセージを入力してください。' }, request);
+    return jsonResponse(400, { error: 'empty_message', message: 'メッセージを入力してください。' }, request, env);
   }
   const message = body.message.trim();
-  if (!message) return jsonResponse(400, { error: 'empty_message', message: 'メッセージを入力してください。' }, request);
+  if (!message) return jsonResponse(400, { error: 'empty_message', message: 'メッセージを入力してください。' }, request, env);
   if (message.length > MAX_MESSAGE_CHARS) {
-    return jsonResponse(400, { error: 'too_long', message: 'メッセージが長すぎます。' }, request);
+    return jsonResponse(400, { error: 'too_long', message: 'メッセージが長すぎます。' }, request, env);
   }
   if (!env.USTYLEMAIN) {
-    return jsonResponse(500, { error: 'internal_error', message: '一時的に利用できません。' }, request);
+    return jsonResponse(500, { error: 'internal_error', message: '一時的に利用できません。' }, request, env);
+  }
+
+  // 5) 全IP合計の日次上限（コストの絶対上限）。
+  const budget = await checkDailyBudget(env, dailyTotalLimit(env), 'chat');
+  if (!budget.ok) {
+    console.warn(`[security] daily_budget_exceeded endpoint=/api/chat/stream count=${budget.count}`);
+    return jsonResponse(429, { error: 'daily_limit', message: 'ただいまご利用が集中しています。少し時間を置いてもう一度お試しください。' }, request, env);
   }
 
   const history = normalizeHistory(body.history, message);
@@ -234,17 +284,17 @@ export async function onRequestPost({ request, env }) {
       'content-type': 'text/event-stream; charset=utf-8',
       'cache-control': 'no-store',
       'x-accel-buffering': 'no',
-    }),
+    }, env),
   });
 }
 
-export async function onRequestOptions({ request }) {
+export async function onRequestOptions({ request, env }) {
   return new Response(null, {
     status: 204,
     headers: responseHeaders(request, {
       'access-control-allow-methods': 'POST, OPTIONS',
       'access-control-allow-headers': 'content-type',
       'cache-control': 'no-store',
-    }),
+    }, env),
   });
 }

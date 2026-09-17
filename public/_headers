@@ -1,0 +1,24 @@
+# セキュリティヘッダー定義（Cloudflare Pages / Workers Assets が解釈し、静的アセット応答に適用される）
+# 注意1: 同じヘッダーを複数ルールで書くと値がカンマ連結されて壊れる。CSP は「/*」で1回だけ定義し、
+#        例外パスでは `! Content-Security-Policy` で外してから定義し直す。
+# 注意2: ここを変更したら scripts/security-headers-check.mjs で必ず実測する（デプロイ前チェック）。
+# 注意3: API(_functions)側のヘッダーは functions/_security.js と対で保守する。
+
+/*
+  Strict-Transport-Security: max-age=31536000
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: accelerometer=(), autoplay=(self), camera=(), display-capture=(), encrypted-media=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), usb=(), xr-spatial-tracking=()
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-site
+  X-Permitted-Cross-Domain-Policies: none
+  X-DNS-Prefetch-Control: off
+  X-XSS-Protection: 0
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' data: https://cdn.jsdelivr.net https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://ai-ustyle-co-jp-worker.ustyle-promotion.workers.dev https://static.cloudflareinsights.com https://cloudflareinsights.com; frame-src 'none'; worker-src 'self' blob:; manifest-src 'self'; media-src 'self'; upgrade-insecure-requests
+
+# 事務作業まるなげLP: DCLogic ランタイムが new Function でコンポーネントを評価し、
+# React(UMD)を unpkg から読むため unsafe-eval と unpkg が必要。Google 広告(gtag)の送信先も許可する。
+/test/ai/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://www.googletagmanager.com https://*.doubleclick.net https://www.googleadservices.com https://adservice.google.com https://www.google.com https://www.google.co.jp; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://www.googletagmanager.com https://*.google-analytics.com https://*.doubleclick.net https://www.googleadservices.com https://adservice.google.com https://www.google.com https://www.google.co.jp; connect-src 'self' https://www.googletagmanager.com https://*.google-analytics.com https://*.doubleclick.net https://www.googleadservices.com https://adservice.google.com https://www.google.com https://www.google.co.jp; frame-src https://www.googletagmanager.com https://*.doubleclick.net; worker-src 'self' blob:; manifest-src 'self'; media-src 'self'; upgrade-insecure-requests
