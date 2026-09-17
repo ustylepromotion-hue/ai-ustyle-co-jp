@@ -78,3 +78,15 @@ python3 scripts/security-csp-check.py http://127.0.0.1:8789
 - main.js は index.html のみが読む（`?v=N` を上げる運用）。**今回 main.js / HTML は変更していない。**
 - `_headers` の `!` 外し（detach）は wrangler dev（Workers Assets）で実測済み。Pages側でも同挙動を
   デプロイ後に `scripts/security-headers-check.mjs` で必ず確認する（CSPが2つ連結されると /test/ai/ が壊れる）。
+
+## 6. 本番反映後の実測（2026-09-17T22:12:25+09:00）
+
+- Pages: preview `security-preview`(e9dee873) → 本番 `main`(25032029) をデプロイ。Functions bundle と `_headers` が同時に配信される。
+- Worker: 人間TTYでデプロイ成功（Version ID `8fb9a7fc-a8b4-4680-896b-30c98346ced0`、`deployments list` で最新が100%）。
+  - エージェント実行が1回ブロックされた原因: wrangler.toml に `[[ratelimits]]`/`[ratelimits.simple]` を足すと guard の RESOURCE_DOMAINS に `ratelimits.simple` が加わり、承認キーが不一致になる（設定形状を変えた時は人間TTYが1回必要。記録後はエージェント再deploy可）。
+- 本番実測（すべてPASS）:
+  - `security-headers-check`: workers.dev **15/15**、www **13/13**、apex **13/13**
+  - `security-csp-check`（実ブラウザ）: www・workers.dev とも **pass=true**（6ページ・CSP違反0・JSエラー0・機能センチネルOK）
+  - 実チャットE2E: 通常質問 → delta 76 + done（料金回答）＝**既存機能は無傷**
+  - プロンプトインジェクション（システムプロンプト/キー名出力要求）→ 漏洩マーカー0件（モデルが拒否、出力フィルタの誤爆もなし）
+- 未適用のまま: D1日次上限（migration 0002）、Pages Functions側のレート制限binding、ゾーンWAF設定。

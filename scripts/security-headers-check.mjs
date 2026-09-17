@@ -55,23 +55,52 @@ for (const path of PAGES) {
   );
 }
 
-// 2) チャットAPIの防壁（いずれもLLM到達前/課金なしで弾かれるもの）
-{
+// 2) チャットAPIの防壁（すべてLLM到達前・課金ゼロで弾かれるものだけを投げる）
+// 伝播待ちは「JSON以外は415」という無課金シグナルで判定する
+// （Pages/Functionsはデプロイ直後に旧版が数十秒〜数分残ることがある。実測で約90秒の遅延を確認）。
+const isWorkerHost = base.includes('.workers.dev');
+const waitApiPropagation = async (timeoutMs = 240000) => {
+  const started = Date.now();
+  for (;;) {
+    const response = await fetchWithHeaders('/api/chat/stream', {
+      method: 'POST',
+      headers: { 'content-type': 'text/plain' },
+      body: 'message=probe',
+    });
+    if (response.status === 415) return { status: response.status, waited_ms: Date.now() - started };
+    if (Date.now() - started > timeoutMs) return { status: response.status, waited_ms: Date.now() - started, timed_out: true };
+    await new Promise((resolve) => setTimeout(resolve, 10000));
+  }
+};
+
+if (isWorkerHost) {
   const response = await fetchWithHeaders('/api/chat/stream');
   record('GET /api/chat/stream は405（生成しない）', response.status === 405 && response.headers.get('x-content-type-options') === 'nosniff', {
     status: response.status,
     allow: response.headers.get('allow'),
     nosniff: response.headers.get('x-content-type-options'),
   });
+} else {
+  console.log('SKIP  GET /api/chat/stream の405確認（Pages配信面ではFunctionsが該当メソッド未exportのため静的アセットへフォールバックする既存挙動。Worker面で確認する）');
 }
 
 {
+  const propagation = await waitApiPropagation();
+  record('チャットAPIの新実装が反映されている（無課金シグナル: JSON以外は415）', propagation.status === 415, propagation);
+}
+
+{
+  // ゲートが無い版に当たっても空メッセージなので生成には到達しない（400で分かる）。
   const response = await fetchWithHeaders('/api/chat/stream', {
     method: 'POST',
     headers: { 'content-type': 'application/json', origin: 'https://evil.example' },
-    body: JSON.stringify({ message: 'security probe' }),
+    body: JSON.stringify({ message: '' }),
   });
-  record('許可外OriginのPOSTは403（クロスサイト遮断）', response.status === 403, { status: response.status, cacao: response.headers.get('access-control-allow-origin') });
+  record('許可外OriginのPOSTは403（クロスサイト遮断）', response.status === 403, {
+    status: response.status,
+    cacao: response.headers.get('access-control-allow-origin'),
+    note: response.status === 400 ? 'origin_gate_missing_or_origin_not_sent' : undefined,
+  });
 }
 
 {
@@ -101,9 +130,11 @@ for (const path of PAGES) {
   record('空メッセージは400（既存の入力検査が生きている）', response.status === 400, { status: response.status });
 }
 
-{
+if (isWorkerHost) {
   const response = await fetchWithHeaders('/api/whatever');
   record('未定義の /api/* は404 JSON', response.status === 404, { status: response.status });
+} else {
+  console.log('SKIP  未定義 /api/* の404確認（Pages配信面は本体Workerのルーティングを通らないため）');
 }
 
 console.log(`\n${results.length - failures}/${results.length} PASS  base=${base}`);
